@@ -6,6 +6,9 @@ import { createField } from './field.js';
 import { Pane } from "tweakpane";
 import { Loader } from './Loader.js';
 import { GrainCart } from './GrainCart.js';
+import { ModelMovementLayer } from './ModelMovementLayer.js';
+import { UIController } from './UIController.js';
+
 
 /*
 This class will handle changes to the scene that need to occur, such as adding and triggering animations for various objects.
@@ -47,6 +50,12 @@ export class SceneManager {
 
         // Initialize loader
         this.loader = new Loader();
+
+        // Initialize ModelMovementLayer
+        this.movementLayer = null;
+
+        // Initialize UIController
+        this.uiController = null;
     }
 
     initializeScene() {
@@ -72,6 +81,10 @@ export class SceneManager {
         grainCart.load().then((model) => {
             model.castShadow = false;
             model.recieveShadow = false;
+    
+            this.movementLayer = new ModelMovementLayer(grainCart);
+            this.uiController = new UIController(this.movementLayer);
+            this.uiController.setUpControls();
             this.scene.add(model);
         }).catch((error) => {
             console.error('Error loading grain cart:', error);
