@@ -57,6 +57,9 @@ export class SceneManager {
 
         // Initialize UIController
         this.uiController = null;
+
+        // Initialize url
+        this.url = "url"//URL HERE;
     }
 
     initializeScene() {
