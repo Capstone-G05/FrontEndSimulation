@@ -14,8 +14,8 @@ export class UIController {
     const PTO = this.pane.addFolder({title: 'PTO'});
 
     //model reset
-    boneFolder.addButton({ title: 'Reset Cart' }).on('click', () => {
-        this.ModelMovementLayer.reset();
+    boneFolder.addButton({ title: 'Fold Cart' }).on('click', () => {
+        this.ModelMovementLayer.autoFold();
       });
 
     //Auger Arm Bottom
@@ -55,13 +55,13 @@ export class UIController {
     
     //Auger Spout
     AugerSpout.addButton({ title: 'UP' }).on('click', () => {
-        this.ModelMovementLayer.startMovement('AugerSpout', "up");
+        this.ModelMovementLayer.startMovement('AugerSpout', "down");
     });
     AugerSpout.addButton({ title: 'STOP' }).on('click', () => {
       this.ModelMovementLayer.stopMovement('AugerSpout');
     });
     AugerSpout.addButton({ title: 'DOWN' }).on('click', () => {
-      this.ModelMovementLayer.startMovement('AugerSpout', "down");
+      this.ModelMovementLayer.startMovement('AugerSpout', "up");
     });
 
     //PTO on
