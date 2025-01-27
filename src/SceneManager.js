@@ -8,6 +8,7 @@ import { Loader } from './Loader.js';
 import { GrainCart } from './GrainCart.js';
 import { ModelMovementLayer } from './ModelMovementLayer.js';
 import { UIController } from './UIController.js';
+import { APIController } from './APIController.js';
 
 
 /*
@@ -81,10 +82,10 @@ export class SceneManager {
         grainCart.load().then((model) => {
             model.castShadow = false;
             model.recieveShadow = false;
-    
             this.movementLayer = new ModelMovementLayer(grainCart);
             this.uiController = new UIController(this.movementLayer);
             this.uiController.setUpControls();
+            //could use API CONTROLLER HERE
             this.scene.add(model);
         }).catch((error) => {
             console.error('Error loading grain cart:', error);
