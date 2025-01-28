@@ -65,8 +65,9 @@ export class SceneManager {
     initializeScene() {
         //this.scene.add(this.sky, this.field);
         this.scene.background = new THREE.Color("white");
-        this.addGrainCart("haulmaster1300"); // Pass model type here
-        this.APISetup();
+        this.addGrainCart("haulmaster1300")
+            .then(() => this.APISetup())
+            .catch((error) => console.error("Error adding grain cart:", error));
     }
 
     render() {
