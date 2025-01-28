@@ -21,6 +21,7 @@ export class APIController{
             .then((data) => {
               console.log('Polled data:', data);
               // Uncomment and update the following line if you need to pass data to the ModelMovementLayer
+              this.processRunningData(data);
               // this.ModelMovementLayer.setPresetData(data);
             })
             .catch((error) => {
@@ -58,6 +59,12 @@ export class APIController{
         .catch((error) => {
             console.error('Error getting preset data:', error);
         });
+    }
+
+    processRunningData(data){
+        //process the data from the server
+        console.log("PROCESSING DATA TO DO STUFF WITH: data");
+        //this.ModelMovementLayer.setPresetData(data);
     }
     
     
