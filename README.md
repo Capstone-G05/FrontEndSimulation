@@ -11,11 +11,8 @@ Run the following command to install the necessary dependencies:
 npm install
 ```
 ### Running the project
-<<<<<<< HEAD
 You will need to include the "static" folder in the project folder from the teams chat in order to be able to run the project.
 
-=======
->>>>>>> 2625313bde96ae0d999cdbdbfe61224a3b82ad06
 To start the development server, run the following command:
 
 ``` bash

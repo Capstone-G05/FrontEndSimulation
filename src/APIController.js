@@ -1,14 +1,7 @@
-<<<<<<< HEAD
 export class APIController{
     constructor(modelMovementLayer){
         this.ModelMovementLayer = modelMovementLayer;
         this.pollingIntervalId = null;
-=======
-
-export class APIController{
-    constructor(modelMovementLayer){
-        this.ModelMovementLayer = modelMovementLayer;
->>>>>>> 2625313bde96ae0d999cdbdbfe61224a3b82ad06
     }
 
     startPolling(url, intervalMs = 100) {
@@ -73,7 +66,6 @@ export class APIController{
         console.log("PROCESSING DATA TO DO STUFF WITH: data");
         //this.ModelMovementLayer.setPresetData(data);
     }
-<<<<<<< HEAD
 
     handleSubmitPTO = async () => {
         
@@ -100,9 +92,6 @@ export class APIController{
         }
     };
           
-=======
-    
->>>>>>> 2625313bde96ae0d999cdbdbfe61224a3b82ad06
     
 
 }

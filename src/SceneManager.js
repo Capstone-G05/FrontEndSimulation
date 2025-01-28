@@ -66,11 +66,7 @@ export class SceneManager {
         //this.scene.add(this.sky, this.field);
         this.scene.background = new THREE.Color("white");
         this.addGrainCart("haulmaster1300"); // Pass model type here
-<<<<<<< HEAD
         //this.APISetup();
-=======
-        this.APISetup();
->>>>>>> 2625313bde96ae0d999cdbdbfe61224a3b82ad06
     }
 
     render() {
@@ -95,27 +91,17 @@ export class SceneManager {
             this.uiController.setUpControls();
             //could use API CONTROLLER HERE
             this.APIController = new APIController(this.movementLayer);
-<<<<<<< HEAD
             this.APIController.getPresetData("http://localhost:8020/pto");//this is a placeholder url
             this.APIController.startPolling("http://localhost:8020/pto", 100); // 100 ms
             this.APIController.handleSubmitPTO();
-=======
->>>>>>> 2625313bde96ae0d999cdbdbfe61224a3b82ad06
             this.scene.add(model);
         }).catch((error) => {
             console.error('Error loading grain cart:', error);
         });
     }
 
-<<<<<<< HEAD
     // APISetup(){
     //     this.APIController.getPresetData("http://localhost:8020/auger-pivot-angle-max");//this is a placeholder url
     //     this.APIController.startPolling("http://localhost:8020/auger-pivot-angle-max", 100); // 100 ms
     // }
-=======
-    APISetup(){
-        this.APIController.getPresetData("http://localhost:3000/presetData");//this is a placeholder url
-        this.APIController.startPolling("http://localhost:3000/presetData", 100); // 100 ms
-    }
->>>>>>> 2625313bde96ae0d999cdbdbfe61224a3b82ad06
 }
