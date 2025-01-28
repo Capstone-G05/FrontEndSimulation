@@ -1,7 +1,7 @@
-
 export class APIController{
     constructor(modelMovementLayer){
         this.ModelMovementLayer = modelMovementLayer;
+        this.pollingIntervalId = null;
     }
 
     startPolling(url, intervalMs = 100) {
@@ -66,7 +66,32 @@ export class APIController{
         console.log("PROCESSING DATA TO DO STUFF WITH: data");
         //this.ModelMovementLayer.setPresetData(data);
     }
-    
+
+    handleSubmitPTO = async () => {
+        
+      
+        try {
+          var response = await fetch('http://localhost:8020/set-pto', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ value: false}),
+          });
+      
+          if (!response.ok) {
+            throw new Error('Failed to set PTO');
+          }
+      
+          var data = await response.json();
+          console.log('PTO set:', data);
+          //alert('PTO successfully set.');
+        } catch (error) {
+          console.error('Error setting PTO:', error);
+          alert('Failed to set PTO. Check console for details.');
+        }
+    };
+          
     
 
 }
