@@ -66,6 +66,7 @@ export class SceneManager {
         //this.scene.add(this.sky, this.field);
         this.scene.background = new THREE.Color("white");
         this.addGrainCart("haulmaster1300"); // Pass model type here
+        this.APISetup();
     }
 
     render() {
@@ -90,10 +91,14 @@ export class SceneManager {
             this.uiController.setUpControls();
             //could use API CONTROLLER HERE
             this.APIController = new APIController(this.movementLayer);
-            this.APIController.getPresetData("http://localhost:3000/presetData");//this is a placeholder url
             this.scene.add(model);
         }).catch((error) => {
             console.error('Error loading grain cart:', error);
         });
+    }
+
+    APISetup(){
+        this.APIController.getPresetData("http://localhost:3000/presetData");//this is a placeholder url
+        this.APIController.startPolling("http://localhost:3000/presetData", 100); // 100 ms
     }
 }

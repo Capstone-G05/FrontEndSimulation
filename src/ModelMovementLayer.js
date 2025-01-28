@@ -185,6 +185,18 @@ export class ModelMovementLayer{
             });
     }
 
+    setPresetData(componentName, minOrMax, angle){
+        console.log("Setting preset data:");
+        console.log(data);
+        if(minOrMax === "min"){
+            this.limits[componentName].min = angle;
+        }
+        else{
+            this.limits[componentName].max = angle;
+        }
+        //this.model.setPresetData
+    }
+
     //TODO: Implement this (quick model reset)
     reset(){
         //this.model.resetCart();
