@@ -58,8 +58,8 @@ export class SceneManager {
         // Initialize UIController
         this.uiController = null;
 
-        // Initialize url
-        this.url = "url"//URL HERE;
+        // Initialize APIController
+        this.APIController = null;
     }
 
     initializeScene() {
@@ -89,6 +89,8 @@ export class SceneManager {
             this.uiController = new UIController(this.movementLayer);
             this.uiController.setUpControls();
             //could use API CONTROLLER HERE
+            this.APIController = new APIController(this.movementLayer);
+            this.APIController.getPresetData("http://localhost:3000/presetData");//this is a placeholder url
             this.scene.add(model);
         }).catch((error) => {
             console.error('Error loading grain cart:', error);

@@ -23,6 +23,10 @@ export class ModelMovementLayer{
         this.componentSpeeds = {}; //eventually have coefficients so each component can move at different speeds
 
     }
+    setPresetData(componentName, componenetData, minOrMax){
+        console.log("Setting preset data for " + componentName + " to " + componenetData);
+        //this.model.setPresetData(componentName, componenetData);
+    }
     //Start Moving a Component
     startMovement(componentName, direction) {
         if (this.isMoving[componentName]) {
