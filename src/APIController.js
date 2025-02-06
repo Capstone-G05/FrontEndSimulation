@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 
 export class APIController{
     constructor(modelMovementLayer){
@@ -68,7 +69,39 @@ export class APIController{
         console.log(data);
         //this.ModelMovementLayer.setPresetData(data);
     }
-    
-    
 
+    setupAPIController(){
+        //Initialize dotenv
+        const test = import.meta.env.VITE_TEST;
+        console.log(test);
+        console.log("YO");
+        //get Model type
+            //send to server? not sure about this here
+        
+        //get all range stuff from server
+            //Spout Min Max
+            //Head Min Max
+            //Top Min Max
+            //Bottom Min Max
+            //Gate Min Max
+        //get all reference speeds from server
+            //Spout
+            //Head
+            //Top
+            //Bottom
+            //Gate
+
+        //send all initial positions to the server
+            //Spout
+            //Head
+            //Top
+            //Bottom
+            //Gate
+        //start polling for all the data
+            //Spout
+            //Head
+            //Top
+            //Bottom
+            //Gate
+    }
 }
