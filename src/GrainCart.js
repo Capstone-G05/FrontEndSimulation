@@ -26,7 +26,7 @@ export class GrainCart {
                         this.model = loadedScene;
                         this.model.name = "grainCart";
                         this.model.scale.set(0.05, 0.05, 0.05);
-                        this.model.position.y = -1;
+                        this.model.position.y = 1;
                         this.model.position.z = 2.5;
                         this.model.position.x = 0;
 

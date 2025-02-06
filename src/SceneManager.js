@@ -63,8 +63,9 @@ export class SceneManager {
     }
 
     initializeScene() {
-        //this.scene.add(this.sky, this.field);
+        this.scene.add(this.sky, this.field);
         this.scene.background = new THREE.Color("white");
+        console.log("heyo");
         this.addGrainCart("haulmaster1300"); // Pass model type here
         //this.APISetup();
     }
@@ -91,9 +92,11 @@ export class SceneManager {
             this.uiController.setUpControls();
             //could use API CONTROLLER HERE
             this.APIController = new APIController(this.movementLayer);
-            this.APIController.getPresetData("http://localhost:8020/pto");//this is a placeholder url
-            this.APIController.startPolling("http://localhost:8020/pto", 100); // 100 ms
-            this.APIController.handleSubmitPTO();
+            // console.log("API Controller: " + this.APIController);
+            this.APIController.setupAPIController();
+            // this.APIController.getPresetData("http://localhost:8020/pto");//this is a placeholder url
+            // this.APIController.startPolling("http://localhost:8020/pto", 100); // 100 ms
+            // this.APIController.handleSubmitPTO();
             this.scene.add(model);
         }).catch((error) => {
             console.error('Error loading grain cart:', error);
