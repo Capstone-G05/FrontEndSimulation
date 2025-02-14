@@ -9,6 +9,7 @@ import { GrainCart } from './GrainCart.js';
 import { ModelMovementLayer } from './ModelMovementLayer.js';
 import { UIController } from './UIController.js';
 import { APIController } from './APIController.js';
+import { GrainPouringEffect } from './GrainPouringEffect.js';
 
 
 /*
@@ -60,10 +61,13 @@ export class SceneManager {
 
         // Initialize APIController
         this.APIController = null;
+
+        //initialize particle effect
+        this.grainPouringEffect = new GrainPouringEffect(new THREE.Vector3(0, 0, 0));
     }
 
     initializeScene() {
-        this.scene.add(this.sky, this.field);
+        //this.scene.add(this.sky, this.field);
         this.scene.background = new THREE.Color("white");
         console.log("heyo");
         this.addGrainCart("haulmaster1300"); // Pass model type here
@@ -87,13 +91,13 @@ export class SceneManager {
         grainCart.load().then((model) => {
             model.castShadow = false;
             model.recieveShadow = false;
-            this.movementLayer = new ModelMovementLayer(grainCart);
+            this.movementLayer = new ModelMovementLayer(grainCart, this.scene);
             this.uiController = new UIController(this.movementLayer);
             this.uiController.setUpControls();
             //could use API CONTROLLER HERE
             this.APIController = new APIController(this.movementLayer);
             // console.log("API Controller: " + this.APIController);
-            this.APIController.setupAPIController();
+            //this.APIController.setupAPIController();
             // this.APIController.getPresetData("http://localhost:8020/pto");//this is a placeholder url
             // this.APIController.startPolling("http://localhost:8020/pto", 100); // 100 ms
             // this.APIController.handleSubmitPTO();

@@ -1,8 +1,9 @@
 import { GrainCart } from './GrainCart.js';
-
+import { GrainPouringEffect } from './GrainPouringEffect.js';
+import * as THREE from 'three';
 
 export class ModelMovementLayer{
-    constructor(model){
+    constructor(model, scene){
         this.model = model;
         this.animationStates = {
             PTO: false, // Tracks whether the PTO animation is running
@@ -22,6 +23,8 @@ export class ModelMovementLayer{
 
         this.componentSpeeds = {}; //eventually have coefficients so each component can move at different speeds
 
+        this.scene = scene;
+        this.grainPouringEffect = new GrainPouringEffect(scene, model);
     }
     setPresetData(componentName, componenetData, minOrMax){
         console.log("Setting preset data for " + componentName + " to " + componenetData);
@@ -35,14 +38,14 @@ export class ModelMovementLayer{
 
         this.isMoving[componentName] = direction;
         this.animateComponent(componentName);
-        console.log(`Starting ${componentName} animation ${direction}`);
+        console.log("Starting ${componentName} animation ${direction}");
     }
 
     //stop component movement
     stopMovement(componentName) {
         this.isMoving[componentName] = false;
         cancelAnimationFrame(this.animationRequestId[componentName]); // Stop the animation
-        console.log(`Stopping ${componentName} animation`);
+        console.log("Stopping ${componentName} animation");
     }
 
     // Animate the component (up or down)
@@ -63,7 +66,7 @@ export class ModelMovementLayer{
     
             // Clamp rotation
             if (newRotation < limits.min || newRotation > limits.max) {
-                console.warn(`${componentName} animation out of bounds`);
+                console.warn("${componentName} animation out of bounds");
                 this.stopMovement(componentName); // Stop animation if out of bounds
                 return;
             }
@@ -221,6 +224,7 @@ export class ModelMovementLayer{
             ptoBody.rotateY(0.1);
             this.animations.PTO = requestAnimationFrame(animate);
         };
+        this.grainPouringEffect.start();
 
         animate(); // Start the animation loop
     }
@@ -235,6 +239,8 @@ export class ModelMovementLayer{
             cancelAnimationFrame(this.animations.PTO);
             this.animations.PTO = null;
         }
+
+        this.grainPouringEffect.stop();
     }
 
 
