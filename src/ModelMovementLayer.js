@@ -220,7 +220,7 @@ export class ModelMovementLayer{
     //TODO: Implement this (quick model reset)
     reset(){
         //this.model.resetCart();
-        this.grainVolume.setFillState("fullMiddle");
+        this.grainVolume.setFillState("fullBack");
         // console.log("Cart reset");
     }
 
