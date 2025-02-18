@@ -8,7 +8,7 @@ export class GrainVolume {
         this.geometry = new THREE.PlaneGeometry(4, 2, 100, 50);
         this.geometry.rotateX(-Math.PI / 2);
         this.geometry.rotateY(Math.PI / 2);
-        this.geometry.translate(0, 2, -0.5);
+        this.geometry.translate(0, 1.5, -0.7);
 
         this.material = new THREE.ShaderMaterial({
             vertexShader: `

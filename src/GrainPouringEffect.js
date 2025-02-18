@@ -36,7 +36,7 @@ export class GrainPouringEffect {
         const positions = new Float32Array(this.particleCount * 3);
         const velocities = new Float32Array(this.particleCount * 3);
 
-        const initSpeed = this.getInitSpeed().normalize().multiplyScalar(0.05);
+        const initSpeed = this.getInitSpeed();
 
         for (let i = 0; i < this.particleCount; i++) {
             const point = this.getRandomPoint();
@@ -45,9 +45,9 @@ export class GrainPouringEffect {
             positions[i * 3 + 1] = point.y;
             positions[i * 3 + 2] = point.z;
 
-            velocities[i * 3] = -initSpeed.x + (Math.random() - 0.5) * 0.02;  // Initial horizontal speed
-            velocities[i * 3 + 1] = -initSpeed.y - Math.random() * 0.02; // Initial downward speed
-            velocities[i * 3 + 2] = -initSpeed.z + (Math.random() - 0.5) * 0.02;
+            velocities[i * 3] = -initSpeed.x *2;  // Initial horizontal speed
+            velocities[i * 3 + 1] = -initSpeed.y *2 // Initial downward speed
+            velocities[i * 3 + 2] = -initSpeed.z *2
         }
 
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -78,7 +78,6 @@ export class GrainPouringEffect {
             console.log("Grain pouring stopped");
         }
     }
-
 
     animate() {
         const positions = this.particles.geometry.attributes.position.array;
