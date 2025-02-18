@@ -1,23 +1,22 @@
 // src/index.js
-import { SceneManager } from './SceneManager.js';//vs code doesn't like this becase it's redundant, but three.js won't compile without it...
+import { SceneManager } from './SceneManager.js';
 import { Lighting } from './Lighting.js';
 
 document.addEventListener('click', () => {
-    const elem = document.documentElement; // Target the full page
+    const elem = document.documentElement; 
   
     // Check if the page is not already in full-screen mode
     if (!document.fullscreenElement && 
         !document.webkitFullscreenElement && 
         !document.msFullscreenElement) {
   
-      // Request full-screen in a cross-browser way
-      if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-      } else if (elem.webkitRequestFullscreen) { // Safari and older WebKit browsers
-        elem.webkitRequestFullscreen();
-      } else if (elem.msRequestFullscreen) { // IE/Edge legacy support
-        elem.msRequestFullscreen();
-      }
+    //   if (elem.requestFullscreen) {
+    //     elem.requestFullscreen();
+    //   } else if (elem.webkitRequestFullscreen) {
+    //     elem.webkitRequestFullscreen();
+    //   } else if (elem.msRequestFullscreen) {
+    //     elem.msRequestFullscreen();
+    //   }
     }
   }, { once: true }); // Triggers only once on the first click
 

@@ -10,7 +10,9 @@ export class APIController{
           AugerHead: false, 
           AugerSpout: false,
           GateAngle: false,
-          PTO: false
+          PTO: false,
+          FrontWeight: false,
+          RearWeight: false
         };
         this.powerOn = false;
       }
@@ -115,6 +117,14 @@ export class APIController{
         this.powerOn = data;
         return;
       }
+      else if(componentName == "FrontWeight" || componentName == "RearWeight"){
+        if(data != this.isMoving[componentName]){
+          // this.modelMovementLayer.toggleFrontWeight(); //need to implement this better first
+          this.isMoving[componentName] = data;
+          console.log(componentName + " changed: " + data);
+          return;
+        }
+      }
       else if(componentName == "PTO"){
         if(this.isMoving[componentName] == true && data == 0){
           this.modelMovementLayer.PTOOff();
@@ -200,6 +210,8 @@ export class APIController{
       // this.startPolling("Gate", "http://localhost:8020/api/gate_open-pwm", "up");
       // this.startPolling("Gate", "http://localhost:8020/api/gate_close-pwm", "down");
       this.startPolling("PTO", "http://localhost:8020/api/pto", "NA");
+      this.startPolling("FrontWeight", "http://localhost:8020/api/front-weight", "NA");
+      this.startPolling("RearWeight", "http://localhost:8020/api/rear-weight", "NA");
 
     }
 
@@ -215,22 +227,50 @@ export class APIController{
       this.startPolling("Power", "http://localhost:8020/api/power", "NA");
     }
 
-    setupAPIController(){
-        //Initialize dotenv
-        // const test = import.meta.env.VITE_TEST;
-        // console.log(test);
-        // console.log("YO");
-
-        //get Model type
-            //send to server? not sure about this here
-        this.simulationPower().then(() => {
-          while(this.powerOn != false){
-            this.presetInit();
-            this.setPresetSpeedsInit();
-            this.sendInitialPositions();
-            this.pollingInit()
+    setupAPIController() {
+      this.retryUntilReachable().then(() => {
+        this.presetInit();
+        this.setPresetSpeedsInit();
+        this.sendInitialPositions();
+        this.pollingInit();
+      }).catch((error) => {
+        console.error("Failed to reach server:", error);
+      });
+    }
+    
+    retryUntilReachable() {
+      const retryDelay = 1000; // 1 second between retries
+    
+      return new Promise((resolve, reject) => {
+        const attemptPowerCheck = () => {
+          this.simulationPower()
+            .then(() => {
+              // Start polling for power status
+              this.pollPowerStatus().then(resolve);
+            })
+            .catch(() => {
+              // Only log once to avoid console spam
+              console.error("Server not reachable. Retrying...");
+              setTimeout(attemptPowerCheck, retryDelay); // Retry after delay
+            });
+        };
+        attemptPowerCheck();
+      });
+    }
+    
+    pollPowerStatus() {
+      return new Promise((resolve) => {
+        const checkStatus = () => {
+          if (this.powerOn) {
+            resolve();
+          } else {
+            // Continue polling every 500ms until powerOn is true
+            setTimeout(checkStatus, 500);
           }
-        });
-
+        };
+    
+        // Start the polling loop
+        checkStatus();
+      });
     }
 }
