@@ -1,8 +1,10 @@
 import { GrainCart } from './GrainCart.js';
-
+import { GrainPouringEffect } from './GrainPouringEffect.js';
+import { GrainVolume } from './GrainVolume.js';
+import * as THREE from 'three';
 
 export class ModelMovementLayer{
-    constructor(model){
+    constructor(model, scene){
         this.model = model;
         this.animationStates = {
             PTO: false, // Tracks whether the PTO animation is running
@@ -18,14 +20,29 @@ export class ModelMovementLayer{
             AugerArmTop: { min: -0.3, max: 2.7872021407926706 }, 
             AugerHead: { min: -Math.PI/3, max: Math.PI/3}, 
             AugerSpout: { min: -1.2, max: -0.5232488139826064 }, 
+            GateAngle: { min: -Math.PI/2, max: Math.PI/2 },
         };
 
-        this.componentSpeeds = {}; //eventually have coefficients so each component can move at different speeds
+        this.componentSpeeds = {
+            AugerArmBottom: Math.PI / 1024, 
+            AugerArmTop: Math.PI / 1024, 
+            AugerHead: Math.PI / 1024, 
+            AugerSpout: Math.PI / 1024,
+            GateAngle: Math.PI / 1024
+        }; //eventually have coefficients so each component can move at different speeds
 
+        this.scene = scene;
+        this.grainPouringEffect = new GrainPouringEffect(scene, model);
+        this.grainVolume = new GrainVolume(scene, new THREE.Vector3(0, 0, 0));
     }
     setPresetData(componentName, componenetData, minOrMax){
         console.log("Setting preset data for " + componentName + " to " + componenetData);
-        //this.model.setPresetData(componentName, componenetData);
+        if(minOrMax === "min"){ 
+            this.componentLimits[componentName].min = componenetData;
+        }
+        else if(minOrMax === "max"){
+            this.componentLimits[componentName].max = componenetData;
+        }
     }
     //Start Moving a Component
     startMovement(componentName, direction) {
@@ -35,14 +52,14 @@ export class ModelMovementLayer{
 
         this.isMoving[componentName] = direction;
         this.animateComponent(componentName);
-        console.log(`Starting ${componentName} animation ${direction}`);
+        console.log("Starting ${componentName} animation ${direction}");
     }
 
     //stop component movement
     stopMovement(componentName) {
         this.isMoving[componentName] = false;
         cancelAnimationFrame(this.animationRequestId[componentName]); // Stop the animation
-        console.log(`Stopping ${componentName} animation`);
+        console.log("Stopping ${componentName} animation");
     }
 
     // Animate the component (up or down)
@@ -58,12 +75,12 @@ export class ModelMovementLayer{
 
         if (limits) {
             const currentRotation = componentName === "AugerArmTop" || componentName === "AugerSpout" ? targetBone.rotation.x : targetBone.rotation.y;
-            const step = direction === "up" || direction === "right" ? Math.PI / 1024 : -Math.PI / 1024;
+            const step = direction === "up" || direction === "right" ? this.componentSpeeds[componentName] : -this.componentSpeeds[componentName];
             const newRotation = currentRotation + step;
     
             // Clamp rotation
             if (newRotation < limits.min || newRotation > limits.max) {
-                console.warn(`${componentName} animation out of bounds`);
+                console.warn("${componentName} animation out of bounds");
                 this.stopMovement(componentName); // Stop animation if out of bounds
                 return;
             }
@@ -107,7 +124,7 @@ export class ModelMovementLayer{
     
         const targetRotation = 0; // Neutral position for AugerHead
         const augerHead = this.model.bones["AugerHead"];
-        const speed = Math.PI / 1024;
+        const speed = this.componentSpeeds["AugerHead"];
     
         const moveAugerHeadToCenter = () => {
             return new Promise((resolve) => {
@@ -194,13 +211,17 @@ export class ModelMovementLayer{
         else{
             this.limits[componentName].max = angle;
         }
-        //this.model.setPresetData
+    }
+
+    setPresetSpeeds(componentName, speed){
+        this.componentSpeeds[componentName] = speed;
     }
 
     //TODO: Implement this (quick model reset)
     reset(){
         //this.model.resetCart();
-        console.log("Cart reset");
+        this.grainVolume.setFillState("fullMiddle");
+        // console.log("Cart reset");
     }
 
     PTOOn(){
@@ -221,6 +242,7 @@ export class ModelMovementLayer{
             ptoBody.rotateY(0.1);
             this.animations.PTO = requestAnimationFrame(animate);
         };
+        this.grainPouringEffect.start();
 
         animate(); // Start the animation loop
     }
@@ -235,7 +257,11 @@ export class ModelMovementLayer{
             cancelAnimationFrame(this.animations.PTO);
             this.animations.PTO = null;
         }
+
+        this.grainPouringEffect.stop();
     }
 
-
+    getPosition(componentName){
+        return componentName === "AugerArmTop" || componentName === "AugerSpout" ? targetBone.rotation.x : targetBone.rotation.y;
+    }
 }

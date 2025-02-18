@@ -18,6 +18,10 @@ export class UIController {
         this.ModelMovementLayer.autoFold();
       });
 
+    boneFolder.addButton({ title: 'Reset Cart' }).on('click', () => {
+        this.ModelMovementLayer.reset();
+      });
+
     //Auger Arm Bottom
     AugerBottom.addButton({ title: 'UP' }).on('click', () => {
         this.ModelMovementLayer.startMovement('AugerArmBottom', "up");
