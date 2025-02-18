@@ -10,13 +10,13 @@ document.addEventListener('click', () => {
         !document.webkitFullscreenElement && 
         !document.msFullscreenElement) {
   
-    //   if (elem.requestFullscreen) {
-    //     elem.requestFullscreen();
-    //   } else if (elem.webkitRequestFullscreen) {
-    //     elem.webkitRequestFullscreen();
-    //   } else if (elem.msRequestFullscreen) {
-    //     elem.msRequestFullscreen();
-    //   }
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
     }
   }, { once: true }); // Triggers only once on the first click
 

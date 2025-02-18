@@ -91,7 +91,7 @@ export class ModelMovementLayer{
             } else {
                 targetBone.rotateX(step);
             }
-            console.log("Rotation at: " + targetBone.rotation.x);
+            //console.log("Rotation at: " + targetBone.rotation.x);
         }
     
         // Repeat animation
@@ -202,19 +202,10 @@ export class ModelMovementLayer{
             });
     }
 
-    setPresetData(componentName, minOrMax, angle){
-        console.log("Setting preset data:");
-        console.log(data);
-        if(minOrMax === "min"){
-            this.limits[componentName].min = angle;
-        }
-        else{
-            this.limits[componentName].max = angle;
-        }
-    }
 
-    setPresetSpeeds(componentName, speed){
-        this.componentSpeeds[componentName] = speed;
+
+    setPresetSpeedsInit(componentName, speed){
+        this.componentSpeeds[componentName] = speed*Math.PI/1024;
     }
 
     //TODO: Implement this (quick model reset)
@@ -262,6 +253,8 @@ export class ModelMovementLayer{
     }
 
     getPosition(componentName){
+        // console.log(componentName);
+        const targetBone = this.model.bones[componentName];
         return componentName === "AugerArmTop" || componentName === "AugerSpout" ? targetBone.rotation.x : targetBone.rotation.y;
     }
 }

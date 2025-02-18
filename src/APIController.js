@@ -15,12 +15,13 @@ export class APIController{
           RearWeight: false
         };
         this.powerOn = false;
+        this.pollingIntervalIds = {};
       }
 
     startPolling(componentName, url, direction) {
       const intervalMs = 100
-        if (this.pollingIntervalId !== null) {
-          console.warn('Polling is already running!');
+        if (this.pollingIntervalIds[componentName + direction]) {
+          console.warn('Polling is already running for ' + componentName + " " + direction);
           return;
         }
     
@@ -33,16 +34,16 @@ export class APIController{
               return response.json();
             })
             .then((data) => {
-              console.log('Polled data:', data);
+              //console.log(componentName + ' Polled data:' + direction + " " + data);
               this.processRunningData(componentName, data, direction);
             })
             .catch((error) => {
-              console.error('Error during polling:', error);
+              console.error(componentName + ' Error during polling: ' + direction + " " + error);
             });
         };
     
         // Start the polling
-        this.pollingIntervalId = setInterval(fetchAndUpdate, intervalMs);
+        this.pollingIntervalIds[componentName + direction] = setInterval(fetchAndUpdate, intervalMs+ Math.random()*100);
         console.log(`Started polling ${url} every ${intervalMs} ms.`);
       }
     
@@ -63,9 +64,9 @@ export class APIController{
     getPresetData(url){
         fetch(url)
         .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            return data;
+        .then(min => {
+            //console.log(min);
+            return min;
         })
         .catch((error) => {
             console.error('Error getting preset data:', error);
@@ -75,34 +76,36 @@ export class APIController{
     sendPosition(componentName){
         let url = "";
         let data = this.modelMovementLayer.getPosition(componentName);
+        console.log("herehere");
         if(componentName == "AugerArmBottom"){
-            url = "http://localhost:8020/api/auger-bottom-pivot-angle";
+            url = "http://localhost:8000/set-auger-bottom-pivot-angle";
         }
-        else if(componentName == "AugerTop"){
-            url = "http://localhost:8020/api/auger-top-angle";
+        else if(componentName == "AugerArmTop"){
+            url = "http://localhost:8000/set-auger-top-angle";
         }
         else if(componentName == "AugerSpout"){
-            url = "http://localhost:8020/api/spout-tilt-angle";
+            url = "http://localhost:8000/set-spout-tilt-angle";
         }
         else if(componentName == "AugerHead"){
-            url = "http://localhost:8020/api/head-rotation-angle";
+            url = "http://localhost:8000/set-head-rotation-angle";
         }
         else if(componentName == "Gate"){
-            url = "http://localhost:8020/api/gate-angle";
+            url = "http://localhost:8000/set-gate-angle";
         }
+        console.log(url + " " + data);
         fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify({value: data}),
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Success:', data);
+            //console.log(componentName + ' Success:', data);
         })
         .catch((error) => {
-            console.error('Error sending position:', error);
+            console.error(componentName+ ' Error sending position:', error);
         });
     }
 
@@ -138,13 +141,13 @@ export class APIController{
       }
       if(direction == up){
         if(this.isMoving[componentName] == up && data == 0){
-          this.modelMovementLayer.setPresetSpeed(componentName, data);
+          this.modelMovementLayer.setPresetSpeedsInit(componentName, data);
           this.modelMovementLayer.stopMovement(componentName);
-          this.modelMovementLayer.sendPosition(componentName);
+          this.sendPosition(componentName);
           this.isMoving[componentName] = false;
         }
         else if(data != 0){
-          this.modelMovementLayer.setPresetSpeed(componentName, data);
+          this.modelMovementLayer.setPresetSpeedsInit(componentName, data);
           if(this.isMoving[componentName] != up){
             this.modelMovementLayer.startMovement(componentName, up);
             this.isMoving[componentName] = up;
@@ -154,13 +157,13 @@ export class APIController{
 
       else{
         if(this.isMoving[componentName] == down && data == 0){
-          this.modelMovementLayer.setPresetSpeed(componentName, data);
+          this.modelMovementLayer.setPresetSpeedsInit(componentName, data);
           this.modelMovementLayer.stopMovement(componentName);
-          this.modelMovementLayer.sendPosition(componentName);
+          this.sendPosition(componentName);
           this.isMoving[componentName] = false;
         }
         else if(data != 0){
-          this.modelMovementLayer.setPresetSpeed(componentName, data);
+          this.modelMovementLayer.setPresetSpeedsInit(componentName, data);
           if(this.isMoving[componentName] != down){
             this.modelMovementLayer.startMovement(componentName, down);
             this.isMoving[componentName] = down;
@@ -170,25 +173,26 @@ export class APIController{
     }
     presetInit(){
         //load all preset data from the server
-        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData("http://localhost:8020/api/auger-bottom-pivot-angle-max", "max"));
-        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData("http://localhost:8020/api/auger-bottom-pivot-angle-min", "min"));
-        this.modelMovementLayer.setPresetData("AugerTop", this.getPresetData("http://localhost:8020/api/auger-top-angle_max", "max"));
-        this.modelMovementLayer.setPresetData("AugerTop", this.getPresetData("http://localhost:8020/api/auger-top-angle-min", "min"));
-        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData("http://localhost:8020/api/spout-tilt-angle-max", "min"));
-        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData("http://localhost:8020/api/spout-tilt-angle-min", "min"));
-        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData("http://localhost:8020/api/head-rotation-angle-max", "max"));
-        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData("http://localhost:8020/api/head-rotation-angle-min", "min"));
-        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData("http://localhost:8020/api/gate-angle-max", "max"));
-        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData("http://localhost:8020/api/gate-angle-min", "min"));
+        console.log("Initialaizing Ranges")
+        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData("http://localhost:8000/auger-bottom-pivot-angle-max", "max"));
+        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData("http://localhost:8000/auger-bottom-pivot-angle-min", "min"));
+        this.modelMovementLayer.setPresetData("AugerArnTop", this.getPresetData("http://localhost:8000/auger-top-angle-max", "max"));
+        this.modelMovementLayer.setPresetData("AugerArmTop", this.getPresetData("http://localhost:8000/auger-top-angle-min", "min"));
+        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData("http://localhost:8000/spout-tilt-angle-max", "min"));
+        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData("http://localhost:8000/spout-tilt-angle-min", "min"));
+        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData("http://localhost:8000/head-rotation-angle-max", "max"));
+        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData("http://localhost:8000/head-rotation-angle-min", "min"));
+        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData("http://localhost:8000/gate-angle-max", "max"));
+        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData("http://localhost:8000/gate-angle-min", "min"));
     }
 
     setPresetSpeedsInit(){
         //load all preset speeds from the server
-      this.modelMovementLayer.setPresetSpeedsInit("AugerArmBottom", this.getPresetData("http://localhost:8020/api/auger-bottom-pivot-speed-ref"));
-      this.modelMovementLayer.setPresetSpeedsInit("AugerTop", this.getPresetData("http://localhost:8020/api/auger-top-speed-ref"));
-      this.modelMovementLayer.setPresetSpeedsInit("AugerSpout", this.getPresetData("http://localhost:8020/api/spout-tilt-speed-ref"));
-      this.modelMovementLayer.setPresetSpeedsInit("AugerHead", this.getPresetData("http://localhost:8020/api/head-rotation-speed-ref"));
-      this.modelMovementLayer.setPresetSpeedsInit("Gate", this.getPresetData("http://localhost:8020/api/gate-speed-ref"));
+      this.modelMovementLayer.setPresetSpeedsInit("AugerArmBottom", this.getPresetData("http://localhost:8000/auger-bottom-pivot-speed-ref"));
+      this.modelMovementLayer.setPresetSpeedsInit("AugerArmTop", this.getPresetData("http://localhost:8000/auger-top-speed-ref"));
+      this.modelMovementLayer.setPresetSpeedsInit("AugerSpout", this.getPresetData("http://localhost:8000/spout-tilt-speed-ref"));
+      this.modelMovementLayer.setPresetSpeedsInit("AugerHead", this.getPresetData("http://localhost:8000/head-rotation-speed-ref"));
+      this.modelMovementLayer.setPresetSpeedsInit("Gate", this.getPresetData("http://localhost:8000/gate-speed-ref"));
     }
 
     //start all polling loops
@@ -199,43 +203,48 @@ export class APIController{
       //Gate
       //PTO
     pollingInit(){
-      this.startPolling("AugerArmBottom", "http://localhost:8020/api/auger-bottom-pivot-up-pwm", "up");
-      this.startPolling("AugerArmBottom", "http://localhost:8020/api/auger-bottom-pivot-down-pwm", "down");
-      this.startPolling("AugerTop", "http://localhost:8020/api/auger-top-fold-pwm", "up");
-      this.startPolling("AugerTop", "http://localhost:8020/api/auger-top-unfold-pwm", "down");
-      this.startPolling("AugerSpout", "http://localhost:8020/api/spout-tilt-up-pwm", "up");
-      this.startPolling("AugerSpout", "http://localhost:8020/api/spout-tilt-down-pwm", "down");
-      this.startPolling("AugerHead", "http://localhost:8020/api/head-rotation-cw-pwm", "right");
-      this.startPolling("AugerHead", "http://localhost:8020/api/head-rotation-ccw-pwm", "left");
-      // this.startPolling("Gate", "http://localhost:8020/api/gate_open-pwm", "up");
-      // this.startPolling("Gate", "http://localhost:8020/api/gate_close-pwm", "down");
-      this.startPolling("PTO", "http://localhost:8020/api/pto", "NA");
-      this.startPolling("FrontWeight", "http://localhost:8020/api/front-weight", "NA");
-      this.startPolling("RearWeight", "http://localhost:8020/api/rear-weight", "NA");
+      this.startPolling("AugerArmBottom", "http://localhost:8000/auger-bottom-pivot-up-pwm", "up");
+      this.startPolling("AugerArmBottom", "http://localhost:8000/auger-bottom-pivot-down-pwm", "down");
+      this.startPolling("AugerArmTop", "http://localhost:8000/auger-top-fold-pwm", "up");
+      this.startPolling("AugerArmTop", "http://localhost:8000/auger-top-unfold-pwm", "down");
+      this.startPolling("AugerSpout", "http://localhost:8000/spout-tilt-up-pwm", "up");
+      this.startPolling("AugerSpout", "http://localhost:8000/spout-tilt-down-pwm", "down");
+      this.startPolling("AugerHead", "http://localhost:8000/head-rotation-cw-pwm", "right");
+      this.startPolling("AugerHead", "http://localhost:8000/head-rotation-ccw-pwm", "left");
+      // this.startPolling("Gate", "http://localhost:8000/gate_open-pwm", "up");
+      // this.startPolling("Gate", "http://localhost:8000/gate_close-pwm", "down");
+      this.startPolling("PTO", "http://localhost:8000/pto", "NA");
+      this.startPolling("FrontWeight", "http://localhost:8000/front-weight", "NA");
+      this.startPolling("RearWeight", "http://localhost:8000/rear-weight", "NA");
 
     }
 
     sendInitialPositions(){
       this.sendPosition("AugerArmBottom");
-      this.sendPosition("AugerTop");
+      this.sendPosition("AugerArmTop");
       this.sendPosition("AugerHead");
       this.sendPosition("AugerSpout");
       // this.sendPosition("Gate");
     }
 
     simulationPower(){
-      this.startPolling("Power", "http://localhost:8020/api/power", "NA");
+      this.startPolling("Power", "http://localhost:8000/power", "NA");
     }
 
     setupAPIController() {
-      this.retryUntilReachable().then(() => {
+	    console.log("Trying");
+      // this.retryUntilReachable().then(() => {
+      //   this.presetInit();
+      //   this.setPresetSpeedsInit();
+      //   this.sendInitialPositions();
+      //   this.pollingInit();
+      // }).catch((error) => {
+      //   console.error("Failed to reach server:", error);
+      // });
         this.presetInit();
         this.setPresetSpeedsInit();
         this.sendInitialPositions();
         this.pollingInit();
-      }).catch((error) => {
-        console.error("Failed to reach server:", error);
-      });
     }
     
     retryUntilReachable() {
@@ -261,7 +270,7 @@ export class APIController{
     pollPowerStatus() {
       return new Promise((resolve) => {
         const checkStatus = () => {
-          if (this.powerOn) {
+          if (!this.powerOn) {
             resolve();
           } else {
             // Continue polling every 500ms until powerOn is true

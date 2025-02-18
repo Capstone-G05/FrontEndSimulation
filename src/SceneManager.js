@@ -28,7 +28,7 @@ export class SceneManager {
         // Initialize renderer
         this.renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)*0.5);
 
         // Initialize controls
         this.controls = new OrbitControls(this.camera, canvas);
@@ -67,7 +67,7 @@ export class SceneManager {
     }
 
     initializeScene() {
-        //this.scene.add(this.sky, this.field);
+        this.scene.add(this.sky, this.field);
         this.scene.background = new THREE.Color("white");
         console.log("heyo");
         this.addGrainCart("haulmaster1300"); // Pass model type here
@@ -97,11 +97,11 @@ export class SceneManager {
             //could use API CONTROLLER HERE
             this.APIController = new APIController(this.movementLayer);
             // console.log("API Controller: " + this.APIController);
-            //this.APIController.setupAPIController();
+            this.scene.add(model);
+            this.APIController.setupAPIController();
             // this.APIController.getPresetData("http://localhost:8020/pto");//this is a placeholder url
             // this.APIController.startPolling("http://localhost:8020/pto", 100); // 100 ms
             // this.APIController.handleSubmitPTO();
-            this.scene.add(model);
         }).catch((error) => {
             console.error('Error loading grain cart:', error);
         });
