@@ -36,6 +36,7 @@ export class APIController{
             .then((data) => {
               //console.log(componentName + ' Polled data:' + direction + " " + data);
               this.processRunningData(componentName, data, direction);
+              this.sendPosition(componentName);
             })
             .catch((error) => {
               console.error(componentName + ' Error during polling: ' + direction + " " + error);
@@ -143,7 +144,6 @@ export class APIController{
         if(this.isMoving[componentName] == up && data == 0){
           this.modelMovementLayer.setPresetSpeedsInit(componentName, data);
           this.modelMovementLayer.stopMovement(componentName);
-          this.sendPosition(componentName);
           this.isMoving[componentName] = false;
         }
         else if(data != 0){
@@ -159,7 +159,7 @@ export class APIController{
         if(this.isMoving[componentName] == down && data == 0){
           this.modelMovementLayer.setPresetSpeedsInit(componentName, data);
           this.modelMovementLayer.stopMovement(componentName);
-          this.sendPosition(componentName);
+          
           this.isMoving[componentName] = false;
         }
         else if(data != 0){
