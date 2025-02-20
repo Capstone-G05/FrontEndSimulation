@@ -3,8 +3,8 @@ import { GrainPouringEffect } from './GrainPouringEffect.js';
 import { GrainVolume } from './GrainVolume.js';
 import * as THREE from 'three';
 
-export class ModelMovementLayer{
-    constructor(model, scene){
+export class ModelMovementLayer {
+    constructor(model, scene) {
         this.model = model;
         this.animationStates = {
             PTO: false, // Tracks whether the PTO animation is running
@@ -35,12 +35,12 @@ export class ModelMovementLayer{
         this.grainPouringEffect = new GrainPouringEffect(scene, model);
         this.grainVolume = new GrainVolume(scene, new THREE.Vector3(0, 0, 0));
     }
-    setPresetData(componentName, componentData, minOrMax){
+    setPresetData(componentName, componentData, minOrMax) {
         console.log("Setting preset data for " + componentName + " to " + componentData);
-        if(minOrMax === "min"){ 
+        if (minOrMax === "min") {
             this.componentLimits[componentName].min = componentData;
         }
-        else if(minOrMax === "max"){
+        else if (minOrMax === "max") {
             this.componentLimits[componentName].max = componentData;
         }
     }
@@ -212,10 +212,11 @@ export class ModelMovementLayer{
 
 
     setPresetSpeedsInit(componentName, speed){
+        // TODO: units ???
         this.componentSpeeds[componentName] = speed*Math.PI/1024;
     }
 
-    //TODO: Implement this (quick model reset)
+    // TODO: Implement this (quick model reset)
     reset(){
         //this.model.resetCart();
         this.grainVolume.setFillState("fullBack");

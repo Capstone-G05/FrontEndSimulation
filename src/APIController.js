@@ -19,6 +19,7 @@ export class APIController {
 
         this.api_host = import.meta.env.VITE_HOST || "localhost";
         this.api_port = import.meta.env.VITE_PORT || 8000;
+        this.base_url = `http://${this.api_host}:${this.api_port}`;
     }
 
     /* Poll PWM data from the API */
@@ -84,25 +85,25 @@ export class APIController {
     /* Update API with angle position */
     sendPosition(componentName) {
         let data = this.modelMovementLayer.getPosition(componentName);
-        let url = `http://${this.api_host}:${this.api_port}`;
+        let url = ""
         switch (componentName) {
             case "AugerArmBottom":
-                url = url + `/pivot-angle?value=${data}`;
+                url = this.base_url + `/pivot-angle?value=${data}`;
                 break;
             case "AugerArmTop":
-                url = url + `/fold-angle?value=${data}`;
+                url = this.base_url + `/fold-angle?value=${data}`;
                 break;
             case "AugerSpout":
-                url = url + `/tilt-angle?value=${data}`;
+                url = this.base_url + `/tilt-angle?value=${data}`;
                 break;
             case "AugerHead":
-                url = url + `/rotate-angle?value=${data}`;
+                url = this.base_url + `/rotate-angle?value=${data}`;
                 break;
             case "Gate":
-                url = url + `/gate-angle?value=${data}`;
+                url = this.base_url + `/gate-angle?value=${data}`;
                 break;
             default:
-                return; // no all components need to send position (ie. PTO, weights, etc...)
+                return; // not all components need to send position (ie. PTO, weights, etc...)
         }
         fetch(url, {
             method: "POST",
@@ -190,43 +191,40 @@ export class APIController {
     }
 
     presetInit() {
-        let url = `http://${this.api_host}:${this.api_port}`;
-        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData(`${url}/pivot-angle-max`), "max");
-        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData(`${url}/pivot-angle-min`), "min");
-        this.modelMovementLayer.setPresetData("AugerArmTop", this.getPresetData(`${url}/fold-angle-max`), "max");
-        this.modelMovementLayer.setPresetData("AugerArmTop", this.getPresetData(`${url}/fold-angle-min`), "min");
-        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData(`${url}/tilt-angle-max`), "min");
-        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData(`${url}/tilt-angle-min`), "min");
-        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData(`${url}/rotate-angle-max`), "max");
-        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData(`${url}/rotate-angle-min`), "min");
-        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${url}/gate-angle-max`, "max"));
-        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${url}/gate-angle-min`, "min"));
+        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData(`${this.base_url}/pivot-angle-max`), "max");
+        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData(`${this.base_url}/pivot-angle-min`), "min");
+        this.modelMovementLayer.setPresetData("AugerArmTop", this.getPresetData(`${this.base_url}/fold-angle-max`), "max");
+        this.modelMovementLayer.setPresetData("AugerArmTop", this.getPresetData(`${this.base_url}/fold-angle-min`), "min");
+        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData(`${this.base_url}/tilt-angle-max`), "min");
+        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData(`${this.base_url}/tilt-angle-min`), "min");
+        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData(`${this.base_url}/rotate-angle-max`), "max");
+        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData(`${this.base_url}/rotate-angle-min`), "min");
+        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${this.base_url}/gate-angle-max`, "max"));
+        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${this.base_url}/gate-angle-min`, "min"));
     }
 
     setPresetSpeedsInit() {
-        let url = `http://${this.api_host}:${this.api_port}`;
-        this.modelMovementLayer.setPresetSpeedsInit("AugerArmBottom", this.getPresetData(`${url}/pivot-speed-reference`));
-        this.modelMovementLayer.setPresetSpeedsInit("AugerArmTop", this.getPresetData(`${url}/fold-speed-reference`));
-        this.modelMovementLayer.setPresetSpeedsInit("AugerSpout", this.getPresetData(`${url}/tilt-speed-reference`));
-        this.modelMovementLayer.setPresetSpeedsInit("AugerHead", this.getPresetData(`${url}/rotate-speed-reference`));
-        this.modelMovementLayer.setPresetSpeedsInit("Gate", this.getPresetData(`${url}/gate-speed-reference`));
+        this.modelMovementLayer.setPresetSpeedsInit("AugerArmBottom", this.getPresetData(`${this.base_url}/pivot-speed-reference`));
+        this.modelMovementLayer.setPresetSpeedsInit("AugerArmTop", this.getPresetData(`${this.base_url}/fold-speed-reference`));
+        this.modelMovementLayer.setPresetSpeedsInit("AugerSpout", this.getPresetData(`${this.base_url}/tilt-speed-reference`));
+        this.modelMovementLayer.setPresetSpeedsInit("AugerHead", this.getPresetData(`${this.base_url}/rotate-speed-reference`));
+        this.modelMovementLayer.setPresetSpeedsInit("Gate", this.getPresetData(`${this.base_url}/gate-speed-reference`));
     }
 
     pollingInit() {
-        let url = `http://${this.api_host}:${this.api_port}`;
-        this.startPolling("AugerArmBottom", `${url}/pivot-up-pwm`, "up");
-        this.startPolling("AugerArmBottom", `${url}/pivot-down-pwm`, "down");
-        this.startPolling("AugerArmTop", `${url}/fold-out-pwm`, "up");
-        this.startPolling("AugerArmTop", `${url}/fold-in-pwm`, "down");
-        this.startPolling("AugerSpout", `${url}/tilt-up-pwm`, "up");
-        this.startPolling("AugerSpout", `${url}/tilt-down-pwm`, "down");
-        this.startPolling("AugerHead", `${url}/rotate-cw-pwm`, "right");
-        this.startPolling("AugerHead", `${url}/rotate-ccw-pwm`, "left");
-        // this.startPolling("Gate", `${url}/gate-open-pwm`, "up");
-        // this.startPolling("Gate", `${url}/gate-close-pwm`, "down");
-        this.startPolling("PTO", `${url}/pto-speed`, "NA");
-        this.startPolling("FrontWeight", `${url}/weight-front`, "NA");
-        this.startPolling("RearWeight", `${url}/weight-rear`, "NA");
+        this.startPolling("AugerArmBottom", `${this.base_url}/pivot-up-pwm`, "up");
+        this.startPolling("AugerArmBottom", `${this.base_url}/pivot-down-pwm`, "down");
+        this.startPolling("AugerArmTop", `${this.base_url}/fold-out-pwm`, "up");
+        this.startPolling("AugerArmTop", `${this.base_url}/fold-in-pwm`, "down");
+        this.startPolling("AugerSpout", `${this.base_url}/tilt-up-pwm`, "up");
+        this.startPolling("AugerSpout", `${this.base_url}/tilt-down-pwm`, "down");
+        this.startPolling("AugerHead", `${this.base_url}/rotate-cw-pwm`, "right");
+        this.startPolling("AugerHead", `${this.base_url}/rotate-ccw-pwm`, "left");
+        // this.startPolling("Gate", `${this.base_url}/gate-open-pwm`, "up");
+        // this.startPolling("Gate", `${this.base_url}/gate-close-pwm`, "down");
+        this.startPolling("PTO", `${this.base_url}/pto-speed`, "NA");
+        this.startPolling("FrontWeight", `${this.base_url}/weight-front`, "NA");
+        this.startPolling("RearWeight", `${this.base_url}/weight-rear`, "NA");
     }
 
     sendInitialPositions() {
@@ -251,10 +249,11 @@ export class APIController {
         // }).catch((error) => {
         //     console.error("Failed to reach server:", error);
         // });
+
         this.presetInit();
-        this.setPresetSpeedsInit();
+        // this.setPresetSpeedsInit(); // TODO: something here is problematic (defaults in API server maybe)
         this.sendInitialPositions();
-        // this.pollingInit();
+        this.pollingInit();
     }
 
     retryUntilReachable() {
