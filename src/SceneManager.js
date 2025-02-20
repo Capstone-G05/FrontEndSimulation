@@ -69,7 +69,6 @@ export class SceneManager {
     initializeScene() {
         this.scene.add(this.sky, this.field);
         this.scene.background = new THREE.Color("white");
-        console.log("heyo");
         this.addGrainCart("haulmaster1300"); // Pass model type here
         //this.APISetup();
     }

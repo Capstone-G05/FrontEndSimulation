@@ -1,8 +1,7 @@
-// src/index.js
 import { SceneManager } from './SceneManager.js';
 import { Lighting } from './Lighting.js';
 
-document.addEventListener('click', () => {
+document.addEventListener("click", () => {
     const elem = document.documentElement; 
   
     // Check if the page is not already in full-screen mode

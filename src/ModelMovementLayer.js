@@ -52,14 +52,14 @@ export class ModelMovementLayer{
 
         this.isMoving[componentName] = direction;
         this.animateComponent(componentName);
-        console.log("Starting ${componentName} animation ${direction}");
+        console.log(`Starting ${componentName} animation ${direction}`);
     }
 
     //stop component movement
     stopMovement(componentName) {
         this.isMoving[componentName] = false;
         cancelAnimationFrame(this.animationRequestId[componentName]); // Stop the animation
-        console.log("Stopping ${componentName} animation");
+        console.log(`Stopping ${componentName} animation`);
     }
 
     // Animate the component (up or down)
