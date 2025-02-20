@@ -79,7 +79,7 @@ export class APIController {
     sendPosition(componentName) {
         let data = this.modelMovementLayer.getPosition(componentName);
 
-        let url = "http://localhost:8000"; // TODO: update from .env
+        let url = "http://10.42.0.1:8000"; // TODO: update from .env
         switch (componentName) {
             case "AugerArmBottom":
                 url = url + `/pivot-angle?value=${data}`;
@@ -171,7 +171,7 @@ export class APIController {
     }
 
     presetInit() {
-        const url = "http://localhost:8000"; // TODO: update from .env
+        const url = "http://10.42.0.1:8000"; // TODO: update from .env
         this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData(`${url}/pivot-angle-max`, "max"));
         this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData(`${url}/pivot-angle-min`, "min"));
         this.modelMovementLayer.setPresetData("AugerArnTop", this.getPresetData(`${url}/fold-angle-max`, "max"));
@@ -185,7 +185,7 @@ export class APIController {
     }
 
     setPresetSpeedsInit() {
-        const url = "http://localhost:8000"; // TODO: update from .env
+        const url = "http://10.42.0.1:8000"; // TODO: update from .env
         this.modelMovementLayer.setPresetSpeedsInit("AugerArmBottom", this.getPresetData(`${url}/pivot-speed-reference`));
         this.modelMovementLayer.setPresetSpeedsInit("AugerArmTop", this.getPresetData(`${url}/fold-speed-reference`));
         this.modelMovementLayer.setPresetSpeedsInit("AugerSpout", this.getPresetData(`${url}/tilt-speed-reference`));
@@ -194,7 +194,7 @@ export class APIController {
     }
 
     pollingInit() {
-        const url = "http://localhost:8000"; // TODO: update from .env
+        const url = "http://10.42.0.1:8000"; // TODO: update from .env
         this.startPolling("AugerArmBottom", `${url}/pivot-up-pwm`, "up");
         this.startPolling("AugerArmBottom", `${url}/pivot-down-pwm`, "down");
         this.startPolling("AugerArmTop", `${url}/fold-out-pwm`, "up");
@@ -220,7 +220,7 @@ export class APIController {
     }
 
     simulationPower() {
-        this.startPolling("Power", "http://localhost:8000/online", "NA");
+        this.startPolling("Power", "http://10.42.0.1:8000/online", "NA");
     }
 
     setupAPIController() {
