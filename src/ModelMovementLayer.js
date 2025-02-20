@@ -35,19 +35,23 @@ export class ModelMovementLayer{
         this.grainPouringEffect = new GrainPouringEffect(scene, model);
         this.grainVolume = new GrainVolume(scene, new THREE.Vector3(0, 0, 0));
     }
-    setPresetData(componentName, componenetData, minOrMax){
-        console.log("Setting preset data for " + componentName + " to " + componenetData);
+    setPresetData(componentName, componentData, minOrMax){
+        console.log("Setting preset data for " + componentName + " to " + componentData);
         if(minOrMax === "min"){ 
-            this.componentLimits[componentName].min = componenetData;
+            this.componentLimits[componentName].min = componentData;
         }
         else if(minOrMax === "max"){
-            this.componentLimits[componentName].max = componenetData;
+            this.componentLimits[componentName].max = componentData;
         }
     }
-    //Start Moving a Component
+
+    /* Start component movement */
     startMovement(componentName, direction) {
+        // TODO: handle weights front/rear
+        if (componentName === "RearWeight" || componentName === "FrontWeight") { return; }
+
         if (this.isMoving[componentName]) {
-            this.stopMovement(componentName); // Stop any ongoing movement for this component
+            this.stopMovement(componentName); // stop any ongoing movement
         }
 
         this.isMoving[componentName] = direction;
@@ -55,20 +59,23 @@ export class ModelMovementLayer{
         console.log(`Starting ${componentName} animation ${direction}`);
     }
 
-    //stop component movement
+    /* Stop component movement */
     stopMovement(componentName) {
         this.isMoving[componentName] = false;
-        cancelAnimationFrame(this.animationRequestId[componentName]); // Stop the animation
+        cancelAnimationFrame(this.animationRequestId[componentName]);
         console.log(`Stopping ${componentName} animation`);
     }
 
-    // Animate the component (up or down)
+    /* Animate the component (up or down) */
     animateComponent(componentName) {
+        // TODO: should 'weight' have bones (?)
+        if (componentName === "RearWeight" || componentName === "FrontWeight") { return; }
+
         // Customize movement logic for each component (use Y-axis or any axis you need)
         const targetBone = this.model.bones[componentName];
-        if(!targetBone){
-            console.warn("Bone not found: " + componentName);
-            return;//bone not found
+        if (!targetBone) {
+            console.error("Bone not found: " + componentName);
+            return;
         }
         const limits = this.componentLimits[componentName];
         const direction = this.isMoving[componentName];
@@ -91,7 +98,7 @@ export class ModelMovementLayer{
             } else {
                 targetBone.rotateX(step);
             }
-            //console.log("Rotation at: " + targetBone.rotation.x);
+            // console.log("Rotation at: " + targetBone.rotation.x);
         }
     
         // Repeat animation
@@ -100,7 +107,7 @@ export class ModelMovementLayer{
         }
     }
 
-    //this is what I was using before to move bones before beginning to play with animations
+    // this is what I was using before to move bones before beginning to play with animations
     rotateBone(boneName, rotation){
         //logic for if they can rotate much goes here
         console.log("Rotating bone: " + boneName + " by " + rotation);
@@ -252,9 +259,27 @@ export class ModelMovementLayer{
         this.grainPouringEffect.stop();
     }
 
-    getPosition(componentName){
-        // console.log(componentName);
+    getPosition(componentName) {
         const targetBone = this.model.bones[componentName];
-        return componentName === "AugerArmTop" || componentName === "AugerSpout" ? targetBone.rotation.x : targetBone.rotation.y;
+        switch (componentName) {
+            case "AugerArmBottom": // pivot
+                return targetBone.rotation.y;
+            case "AugerArmTop": // fold
+                return targetBone.rotation.x;
+            case "AugerSpout": // rotate (?)
+                return targetBone.rotation.x;
+            case "AugerHead": // tile (?)
+                return targetBone.rotation.y;
+            case "Gate": // gate
+                return 0;  // TODO: handle
+            case "PTO":
+                return 0;  // TODO: handle
+            case "FrontWeight":
+                return 0;  // TODO: handle
+            case "RearWeight":
+                return 0;  // TODO: handle
+            default:
+                console.warn(`[getPosition] unhandled component: ${componentName}`)
+        }
     }
 }

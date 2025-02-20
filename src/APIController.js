@@ -16,6 +16,9 @@ export class APIController {
         };
         this.powerOn = false;
         this.pollingIntervalIds = {};
+
+        this.api_host = import.meta.env.VITE_HOST || "localhost";
+        this.api_port = import.meta.env.VITE_PORT || 8000;
     }
 
     /* Poll PWM data from the API */
@@ -63,12 +66,15 @@ export class APIController {
 
     /* Load initial data from the API */
     getPresetData(url) {
-        fetch(url)
+        return fetch(url)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(`HTTP Error: ${response.status}`);
                 }
                 return response.json();
+            })
+            .then(data => {
+                return data;
             })
             .catch((error) => {
                 console.error("Error getting preset data: ", error);
@@ -78,8 +84,7 @@ export class APIController {
     /* Update API with angle position */
     sendPosition(componentName) {
         let data = this.modelMovementLayer.getPosition(componentName);
-
-        let url = "http://10.42.0.1:8000"; // TODO: update from .env
+        let url = `http://${this.api_host}:${this.api_port}`;
         switch (componentName) {
             case "AugerArmBottom":
                 url = url + `/pivot-angle?value=${data}`;
@@ -96,8 +101,9 @@ export class APIController {
             case "Gate":
                 url = url + `/gate-angle?value=${data}`;
                 break;
+            default:
+                return; // no all components need to send position (ie. PTO, weights, etc...)
         }
-
         fetch(url, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -115,77 +121,90 @@ export class APIController {
     }
 
     processRunningData(componentName, data, direction) {
-        let down = "down";
-        let up = "up";
-
-        if (componentName == "AugerHead") {
-            down = "left";
-            up = "right";
-        } else if (componentName == "SimulationPower") {
-            this.powerOn = data;
-            return;
-        } else if (componentName == "FrontWeight" || componentName == "RearWeight") {
-            if (data != this.isMoving[componentName]) {
-                // this.modelMovementLayer.toggleFrontWeight(); //need to implement this better first
-                this.isMoving[componentName] = data;
-                console.log(componentName + " changed: " + data);
-                return;
-            }
-        } else if (componentName == "PTO") {
-            if (this.isMoving[componentName] == true && data == 0) {
-                this.modelMovementLayer.PTOOff();
-                this.isMoving[componentName] = false;
-            } else if (this.isMoving[componentName] == false && data != 0) {
-                this.modelMovementLayer.PTOOn();
-                this.isMoving[componentName] = true;
-            }
-            return;
+        switch (componentName) {
+            case "AugerArmBottom":
+                this.processAugerLogic(componentName, data, direction, "down");
+                this.processAugerLogic(componentName, data, direction, "up");
+                break;
+            case "AugerArmTop":
+                this.processAugerLogic(componentName, data, direction, "down");
+                this.processAugerLogic(componentName, data, direction, "up");
+                break;
+            case "AugerSpout":
+                this.processAugerLogic(componentName, data, direction, "down");
+                this.processAugerLogic(componentName, data, direction, "up");
+                break;
+            case "AugerHead":
+                this.processAugerLogic(componentName, data, direction, "left");
+                this.processAugerLogic(componentName, data, direction, "right");
+                break;
+            case "Gate":
+                this.processAugerLogic(componentName, data, direction, "down");
+                this.processAugerLogic(componentName, data, direction, "up");
+                break;
+            case "PTO":
+                if (this.isMoving[componentName] === true && data === 0) {
+                    this.modelMovementLayer.PTOOff();
+                    this.isMoving[componentName] = false;
+                } else if (this.isMoving[componentName] === false && data !== 0) {
+                    this.modelMovementLayer.PTOOn();
+                    this.isMoving[componentName] = true;
+                }
+                break;
+            case "FrontWeight":
+                // todo: fix bug
+                if (data !== this.isMoving[componentName]) {
+                    // this.modelMovementLayer.toggleFrontWeight(); //need to implement this better first
+                    this.isMoving[componentName] = data;
+                    // console.log(componentName + " changed: " + data);
+                }
+                break;
+            case "RearWeight":
+                // todo: fix bug
+                if (data !== this.isMoving[componentName]) {
+                    // this.modelMovementLayer.toggleFrontWeight(); //need to implement this better first
+                    this.isMoving[componentName] = data;
+                    // console.log(componentName + " changed: " + data);
+                }
+                break;
+            case "Power":
+                this.powerOn = data;
+                break;
+            default:
+                console.warn(`[processRunningData] unhandled component: ${componentName}`);
         }
+    }
 
-        if (direction == up) {
-            if (this.isMoving[componentName] == up && data == 0) {
-                this.modelMovementLayer.setPresetSpeedsInit(componentName, data / 100);
-                this.modelMovementLayer.stopMovement(componentName);
-                this.isMoving[componentName] = false;
-            } else if (data != 0) {
-                this.modelMovementLayer.setPresetSpeedsInit(componentName, data / 100);
-                if (this.isMoving[componentName] != up) {
-                    this.modelMovementLayer.startMovement(componentName, up);
-                    this.isMoving[componentName] = up;
-                }
-            }
-        } else {
-            if (this.isMoving[componentName] == down && data == 0) {
-                this.modelMovementLayer.setPresetSpeedsInit(componentName, data / 100);
-                this.modelMovementLayer.stopMovement(componentName);
-
-                this.isMoving[componentName] = false;
-            } else if (data != 0) {
-                this.modelMovementLayer.setPresetSpeedsInit(componentName, data / 100);
-                if (this.isMoving[componentName] != down) {
-                    this.modelMovementLayer.startMovement(componentName, down);
-                    this.isMoving[componentName] = down;
-                }
+    processAugerLogic(componentName, data, direction, movement) {
+        if (this.isMoving[componentName] === movement && data === 0) {
+            this.modelMovementLayer.setPresetSpeedsInit(componentName, data / 100);
+            this.modelMovementLayer.stopMovement(componentName);
+            this.isMoving[componentName] = false;
+        } else if (data !== 0) {
+            this.modelMovementLayer.setPresetSpeedsInit(componentName, data / 100);
+            if (this.isMoving[componentName] !== movement) {
+                this.modelMovementLayer.startMovement(componentName, movement);
+                this.isMoving[componentName] = movement;
             }
         }
     }
 
     presetInit() {
-        const url = "http://10.42.0.1:8000"; // TODO: update from .env
-        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData(`${url}/pivot-angle-max`, "max"));
-        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData(`${url}/pivot-angle-min`, "min"));
-        this.modelMovementLayer.setPresetData("AugerArnTop", this.getPresetData(`${url}/fold-angle-max`, "max"));
-        this.modelMovementLayer.setPresetData("AugerArmTop", this.getPresetData(`${url}/fold-angle-min`, "min"));
-        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData(`${url}/tilt-angle-max`, "min"));
-        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData(`${url}/tilt-angle-min`, "min"));
-        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData(`${url}/rotate-angle-max`, "max"));
-        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData(`${url}/rotate-angle-min`, "min"));
+        let url = `http://${this.api_host}:${this.api_port}`;
+        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData(`${url}/pivot-angle-max`), "max");
+        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData(`${url}/pivot-angle-min`), "min");
+        this.modelMovementLayer.setPresetData("AugerArmTop", this.getPresetData(`${url}/fold-angle-max`), "max");
+        this.modelMovementLayer.setPresetData("AugerArmTop", this.getPresetData(`${url}/fold-angle-min`), "min");
+        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData(`${url}/tilt-angle-max`), "min");
+        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData(`${url}/tilt-angle-min`), "min");
+        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData(`${url}/rotate-angle-max`), "max");
+        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData(`${url}/rotate-angle-min`), "min");
         // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${url}/gate-angle-max`, "max"));
         // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${url}/gate-angle-min`, "min"));
     }
 
     setPresetSpeedsInit() {
-        const url = "http://10.42.0.1:8000"; // TODO: update from .env
+        let url = `http://${this.api_host}:${this.api_port}`;
         this.modelMovementLayer.setPresetSpeedsInit("AugerArmBottom", this.getPresetData(`${url}/pivot-speed-reference`));
         this.modelMovementLayer.setPresetSpeedsInit("AugerArmTop", this.getPresetData(`${url}/fold-speed-reference`));
         this.modelMovementLayer.setPresetSpeedsInit("AugerSpout", this.getPresetData(`${url}/tilt-speed-reference`));
@@ -194,7 +213,7 @@ export class APIController {
     }
 
     pollingInit() {
-        const url = "http://10.42.0.1:8000"; // TODO: update from .env
+        let url = `http://${this.api_host}:${this.api_port}`;
         this.startPolling("AugerArmBottom", `${url}/pivot-up-pwm`, "up");
         this.startPolling("AugerArmBottom", `${url}/pivot-down-pwm`, "down");
         this.startPolling("AugerArmTop", `${url}/fold-out-pwm`, "up");
@@ -205,10 +224,9 @@ export class APIController {
         this.startPolling("AugerHead", `${url}/rotate-ccw-pwm`, "left");
         // this.startPolling("Gate", `${url}/gate-open-pwm`, "up");
         // this.startPolling("Gate", `${url}/gate-close-pwm`, "down");
-        this.startPolling("PTO", `${url}/pto_speed`, "NA");
+        this.startPolling("PTO", `${url}/pto-speed`, "NA");
         this.startPolling("FrontWeight", `${url}/weight-front`, "NA");
         this.startPolling("RearWeight", `${url}/weight-rear`, "NA");
-
     }
 
     sendInitialPositions() {
@@ -220,7 +238,7 @@ export class APIController {
     }
 
     simulationPower() {
-        this.startPolling("Power", "http://10.42.0.1:8000/online", "NA");
+        return this.startPolling("Power", `http://${this.api_host}:${this.api_port}/online`, "NA");
     }
 
     setupAPIController() {
@@ -236,7 +254,7 @@ export class APIController {
         this.presetInit();
         this.setPresetSpeedsInit();
         this.sendInitialPositions();
-        this.pollingInit();
+        // this.pollingInit();
     }
 
     retryUntilReachable() {
