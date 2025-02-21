@@ -173,12 +173,12 @@ export class APIController {
 
     processAugerLogic(componentName, data, direction) {
         if (this.isMoving[componentName] === direction && data === 0) {
-            this.modelMovementLayer.setPresetSpeedsInit(componentName, data / 100);
+            this.modelMovementLayer.setSpeed(componentName, data / 100);
             console.log(componentName + " stopped: " + data);
             this.modelMovementLayer.stopMovement(componentName);
             this.isMoving[componentName] = false;
         } else if (data !== 0) {
-            this.modelMovementLayer.setPresetSpeedsInit(componentName, data / 100);
+            this.modelMovementLayer.setSpeed(componentName, data / 100);
             console.log(componentName + " started: " + data + " " + direction);
             if (this.isMoving[componentName] !== direction) {
                 this.modelMovementLayer.startMovement(componentName, direction);
@@ -247,8 +247,8 @@ export class APIController {
         //     console.error("Failed to reach server:", error);
         // });
 
-        // this.presetInit();
-        // this.setPresetSpeedsInit(); // TODO: something here is problematic (defaults in API server maybe)
+        this.presetInit();
+        this.setPresetSpeedsInit(); // TODO: something here is problematic (defaults in API server maybe)
         this.sendInitialPositions();
         this.pollingInit();
     }
