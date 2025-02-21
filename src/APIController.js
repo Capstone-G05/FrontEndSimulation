@@ -217,12 +217,12 @@ export class APIController {
     }
 
     pollingInit() {
-        this.startPolling("AugerArmBottom", `${this.base_url}/pivot-up-pwm`, "down");
-        this.startPolling("AugerArmBottom", `${this.base_url}/pivot-down-pwm`, "up");
+        this.startPolling("AugerArmBottom", `${this.base_url}/pivot-up-pwm`, "up");
+        this.startPolling("AugerArmBottom", `${this.base_url}/pivot-down-pwm`, "down");
         this.startPolling("AugerArmTop", `${this.base_url}/fold-out-pwm`, "down");
         this.startPolling("AugerArmTop", `${this.base_url}/fold-in-pwm`, "up");
-        this.startPolling("AugerSpout", `${this.base_url}/tilt-up-pwm`, "up");
-        this.startPolling("AugerSpout", `${this.base_url}/tilt-down-pwm`, "down");
+        this.startPolling("AugerSpout", `${this.base_url}/tilt-up-pwm`, "down");
+        this.startPolling("AugerSpout", `${this.base_url}/tilt-down-pwm`, "up");
         this.startPolling("AugerHead", `${this.base_url}/rotate-cw-pwm`, "right");
         this.startPolling("AugerHead", `${this.base_url}/rotate-ccw-pwm`, "left");
         // this.startPolling("Gate", `${this.base_url}/gate-open-pwm`, "up"); //TODO
