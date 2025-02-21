@@ -248,7 +248,7 @@ export class APIController {
         // });
 
         this.presetInit();
-        this.setPresetSpeedsInit(); // TODO: something here is problematic (defaults in API server maybe)
+        // this.setPresetSpeedsInit(); // TODO: something here is problematic (defaults in API server maybe)
         this.sendInitialPositions();
         this.pollingInit();
     }
