@@ -173,12 +173,12 @@ export class APIController {
 
     processAugerLogic(componentName, data, direction) {
         if (this.isMoving[componentName] === direction && data === 0) {
-            this.modelMovementLayer.setSpeed(componentName, data / 1000);
+            this.modelMovementLayer.setSpeed(componentName, data);
             console.log(componentName + " stopped: " + data);
             this.modelMovementLayer.stopMovement(componentName);
             this.isMoving[componentName] = false;
         } else if (data !== 0) {
-            this.modelMovementLayer.setSpeed(componentName, data / 1000);
+            this.modelMovementLayer.setSpeed(componentName, data);
             console.log(componentName + " started: " + data + " " + direction);
             if (this.isMoving[componentName] !== direction) {
                 this.modelMovementLayer.startMovement(componentName, direction);
@@ -187,25 +187,33 @@ export class APIController {
         }
     }
 
+    async setPresetData(componentName, url, direction) {
+        const data = await this.getPresetData(url);
+        this.modelMovementLayer.setPresetData(componentName, data, direction);
+    }
     presetInit() {
-        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData(`${this.base_url}/pivot-angle-max`), "max");
-        this.modelMovementLayer.setPresetData("AugerArmBottom", this.getPresetData(`${this.base_url}/pivot-angle-min`), "min");
-        this.modelMovementLayer.setPresetData("AugerArmTop", this.getPresetData(`${this.base_url}/fold-angle-max`), "max");
-        this.modelMovementLayer.setPresetData("AugerArmTop", this.getPresetData(`${this.base_url}/fold-angle-min`), "min");
-        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData(`${this.base_url}/tilt-angle-max`), "min");
-        this.modelMovementLayer.setPresetData("AugerSpout", this.getPresetData(`${this.base_url}/tilt-angle-min`), "min");
-        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData(`${this.base_url}/rotate-angle-max`), "max");
-        this.modelMovementLayer.setPresetData("AugerHead", this.getPresetData(`${this.base_url}/rotate-angle-min`), "min");
+        this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-max`, "max");
+        this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-min`, "min");
+        this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-max`, "max");
+        this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-min`, "min");
+        this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-max`, "max");
+        this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-min`, "min");
+        this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-max`, "max");
+        this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-min`, "min");
         // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${this.base_url}/gate-angle-max`, "max"));
         // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${this.base_url}/gate-angle-min`, "min"));
     }
 
-    setPresetSpeedsInit() {
-        this.modelMovementLayer.setPresetSpeedsInit("AugerArmBottom", this.getPresetData(`${this.base_url}/pivot-speed-reference`));
-        this.modelMovementLayer.setPresetSpeedsInit("AugerArmTop", this.getPresetData(`${this.base_url}/fold-speed-reference`));
-        this.modelMovementLayer.setPresetSpeedsInit("AugerSpout", this.getPresetData(`${this.base_url}/tilt-speed-reference`));
-        this.modelMovementLayer.setPresetSpeedsInit("AugerHead", this.getPresetData(`${this.base_url}/rotate-speed-reference`));
-        this.modelMovementLayer.setPresetSpeedsInit("Gate", this.getPresetData(`${this.base_url}/gate-speed-reference`));
+    async setPresetSpeedsInit(componentName, url){
+        const data = await this.getPresetData(url);
+        this.modelMovementLayer.setPresetSpeedsInit(componentName, data);
+    }
+    setPresetSpeeds() {
+        this.setPresetSpeedsInit("AugerArmBottom", `${this.base_url}/pivot-speed-reference`);
+        this.setPresetSpeedsInit("AugerArmTop", `${this.base_url}/fold-speed-reference`);
+        this.setPresetSpeedsInit("AugerSpout", `${this.base_url}/tilt-speed-reference`);
+        this.setPresetSpeedsInit("AugerHead", `${this.base_url}/rotate-speed-reference`);
+        this.setPresetSpeedsInit("Gate", `${this.base_url}/gate-speed-reference`);
     }
 
     pollingInit() {
@@ -248,7 +256,7 @@ export class APIController {
         // });
 
         this.presetInit();
-        this.setPresetSpeedsInit(); // TODO: something here is problematic (defaults in API server maybe)
+        this.setPresetSpeeds(); // TODO: something here is problematic (defaults in API server maybe)
         this.sendInitialPositions();
         this.pollingInit();
     }

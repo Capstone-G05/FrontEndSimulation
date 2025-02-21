@@ -227,7 +227,7 @@ export class ModelMovementLayer {
     }
 
     setSpeed(componentName, speedPercentage){
-        this.componentSpeeds[componentName] = this.componentMaxSpeeds[componentName] * speedPercentage;
+        this.componentSpeeds[componentName] = this.componentMaxSpeeds[componentName] * (speedPercentage/100);
     }
     // TODO: Implement this (quick model reset)
     reset(){
