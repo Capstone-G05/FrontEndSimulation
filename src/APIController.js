@@ -24,7 +24,7 @@ export class APIController {
 
     /* Poll PWM data from the API */
     startPolling(componentName, url, direction) {
-        const intervalMs = 100;
+        const intervalMs = 400;
         // check that the polling task isn't already running
         if (this.pollingIntervalIds[componentName + direction]) {
             console.warn("Polling is already running for " + componentName + " " + direction);
