@@ -124,24 +124,19 @@ export class APIController {
     processRunningData(componentName, data, direction) {
         switch (componentName) {
             case "AugerArmBottom":
-                this.processAugerLogic(componentName, data, direction, "down");
-                this.processAugerLogic(componentName, data, direction, "up");
+                this.processAugerLogic(componentName, data, direction);
                 break;
             case "AugerArmTop":
-                this.processAugerLogic(componentName, data, direction, "down");
-                this.processAugerLogic(componentName, data, direction, "up");
+                this.processAugerLogic(componentName, data, direction);
                 break;
             case "AugerSpout":
-                this.processAugerLogic(componentName, data, direction, "down");
-                this.processAugerLogic(componentName, data, direction, "up");
+                this.processAugerLogic(componentName, data, direction);
                 break;
             case "AugerHead":
-                this.processAugerLogic(componentName, data, direction, "left");
-                this.processAugerLogic(componentName, data, direction, "right");
+                this.processAugerLogic(componentName, data, direction);
                 break;
             case "Gate":
-                this.processAugerLogic(componentName, data, direction, "down");
-                this.processAugerLogic(componentName, data, direction, "up");
+                this.processAugerLogic(componentName, data, direction);
                 break;
             case "PTO":
                 if (this.isMoving[componentName] === true && data === 0) {
@@ -176,17 +171,17 @@ export class APIController {
         }
     }
 
-    processAugerLogic(componentName, data, direction, movement) {
-        if (this.isMoving[componentName] === movement && data === 0) {
+    processAugerLogic(componentName, data, direction) {
+        if (this.isMoving[componentName] === direction && data === 0) {
             this.modelMovementLayer.setPresetSpeedsInit(componentName, data / 100);
             console.log(componentName + " stopped: " + data);
             this.modelMovementLayer.stopMovement(componentName);
             this.isMoving[componentName] = false;
         } else if (data !== 0) {
             this.modelMovementLayer.setPresetSpeedsInit(componentName, data / 100);
-            console.log(componentName + " started: " + data + " " + movement);
-            if (this.isMoving[componentName] !== movement) {
-                this.modelMovementLayer.startMovement(componentName, movement);
+            console.log(componentName + " started: " + data + " " + direction);
+            if (this.isMoving[componentName] !== direction) {
+                this.modelMovementLayer.startMovement(componentName, direction);
                 this.isMoving[componentName] = direction;
             }
         }
