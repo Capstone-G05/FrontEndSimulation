@@ -44,7 +44,7 @@ export class ModelMovementLayer {
         this.grainVolume = new GrainVolume(scene, new THREE.Vector3(0, 0, 0));
     }
     setPresetData(componentName, componentData, minOrMax) {
-        console.log("Setting preset data for " + componentName + " to " + componentData + " " + minOrMax);
+        console.log("Setting preset data for " + componentName + " to " + componentData + " " + minOrMax + " degrees" + " (" + this.degreesToRadians(componentData) + " radians)"); 
         if (minOrMax === "min") {
             this.componentLimits[componentName].min = this.degreesToRadians(componentData);
         }
