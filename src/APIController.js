@@ -31,7 +31,7 @@ export class APIController {
             return;
         }
 
-        /* Fetch & process PWM data from API */
+        // Fetch & process PWM data from API
         const fetchAndUpdate = () => {
             fetch(url)
                 .then((response) => {
@@ -185,7 +185,7 @@ export class APIController {
             this.modelMovementLayer.setPresetSpeedsInit(componentName, data / 100);
             if (this.isMoving[componentName] !== movement) {
                 this.modelMovementLayer.startMovement(componentName, movement);
-                this.isMoving[componentName] = movement;
+                this.isMoving[componentName] = direction;
             }
         }
     }
@@ -220,8 +220,8 @@ export class APIController {
         this.startPolling("AugerSpout", `${this.base_url}/tilt-down-pwm`, "down");
         this.startPolling("AugerHead", `${this.base_url}/rotate-cw-pwm`, "right");
         this.startPolling("AugerHead", `${this.base_url}/rotate-ccw-pwm`, "left");
-        // this.startPolling("Gate", `${this.base_url}/gate-open-pwm`, "up");
-        // this.startPolling("Gate", `${this.base_url}/gate-close-pwm`, "down");
+        // this.startPolling("Gate", `${this.base_url}/gate-open-pwm`, "up"); //TODO
+        // this.startPolling("Gate", `${this.base_url}/gate-close-pwm`, "down"); //TODO
         this.startPolling("PTO", `${this.base_url}/pto-speed`, "NA");
         this.startPolling("FrontWeight", `${this.base_url}/weight-front`, "NA");
         this.startPolling("RearWeight", `${this.base_url}/weight-rear`, "NA");
@@ -232,7 +232,7 @@ export class APIController {
         this.sendPosition("AugerArmTop");
         this.sendPosition("AugerHead");
         this.sendPosition("AugerSpout");
-        // this.sendPosition("Gate");
+        // this.sendPosition("Gate"); //TODO
     }
 
     simulationPower() {
