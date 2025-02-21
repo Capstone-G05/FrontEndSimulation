@@ -31,6 +31,14 @@ export class ModelMovementLayer {
             GateAngle: Math.PI / 1024
         }; //eventually have coefficients so each component can move at different speeds
 
+        this.componentMaxSpeeds = {
+            AugerArmBottom: Math.PI / 1024, 
+            AugerArmTop: Math.PI / 1024, 
+            AugerHead: Math.PI / 1024, 
+            AugerSpout: Math.PI / 1024,
+            GateAngle: Math.PI / 1024
+        };
+
         this.scene = scene;
         this.grainPouringEffect = new GrainPouringEffect(scene, model);
         this.grainVolume = new GrainVolume(scene, new THREE.Vector3(0, 0, 0));
@@ -38,10 +46,10 @@ export class ModelMovementLayer {
     setPresetData(componentName, componentData, minOrMax) {
         console.log("Setting preset data for " + componentName + " to " + componentData);
         if (minOrMax === "min") {
-            this.componentLimits[componentName].min = componentData;
+            this.componentLimits[componentName].min = Math.DegreesToRadians(componentData);
         }
         else if (minOrMax === "max") {
-            this.componentLimits[componentName].max = componentData;
+            this.componentLimits[componentName].max =  Math.DegreesToRadians(componentData);
         }
     }
 
@@ -213,7 +221,11 @@ export class ModelMovementLayer {
 
     setPresetSpeedsInit(componentName, speed){
         // TODO: units ???
-        this.componentSpeeds[componentName] = speed*Math.PI/1024;
+        this.componentMaxSpeeds[componentName] = Math.DegreesToRadians(speed/1000);
+    }
+
+    setSpeed(componentName, speed){
+        this.componentSpeeds[componentName] = this.componentMaxSpeeds[componentName] * speed;
     }
 
     // TODO: Implement this (quick model reset)
@@ -264,13 +276,13 @@ export class ModelMovementLayer {
         const targetBone = this.model.bones[componentName];
         switch (componentName) {
             case "AugerArmBottom": // pivot
-                return this.radiansToDegrees(targetBone.rotation.y);
+                return Math.radiansToDegrees(targetBone.rotation.y);
             case "AugerArmTop": // fold
-                return this.radiansToDegrees(targetBone.rotation.x);
+                return Math.radiansToDegrees(targetBone.rotation.x);
             case "AugerSpout": // rotate (?)
-                return this.radiansToDegrees(targetBone.rotation.x);
+                return Math.radiansToDegrees(targetBone.rotation.x);
             case "AugerHead": // tile (?)
-                return this.radiansToDegrees(targetBone.rotation.y);
+                return Math.radiansToDegrees(targetBone.rotation.y);
             case "Gate": // gate
                 return 0;  // TODO: handle
             case "PTO":
@@ -282,9 +294,5 @@ export class ModelMovementLayer {
             default:
                 console.warn(`[getPosition] unhandled component: ${componentName}`)
         }
-    }
-
-    radiansToDegrees(radians) {
-        return radians * 180 / Math.PI;
     }
 }
