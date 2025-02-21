@@ -46,10 +46,10 @@ export class ModelMovementLayer {
     setPresetData(componentName, componentData, minOrMax) {
         console.log("Setting preset data for " + componentName + " to " + componentData);
         if (minOrMax === "min") {
-            this.componentLimits[componentName].min = Math.DegreesToRadians(componentData);
+            this.componentLimits[componentName].min = this.degreesToRadians(componentData);
         }
         else if (minOrMax === "max") {
-            this.componentLimits[componentName].max =  Math.DegreesToRadians(componentData);
+            this.componentLimits[componentName].max =  this.degreesToRadians(componentData);
         }
     }
 
