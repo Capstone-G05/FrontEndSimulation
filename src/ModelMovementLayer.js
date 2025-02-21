@@ -221,11 +221,13 @@ export class ModelMovementLayer {
 
     setPresetSpeedsInit(componentName, speed){
         // TODO: units ???
+        console.log(componentName + " speed set to " + speed);
+        console.log("Max speed for " + componentName + " set to " + this.degreesToRadians(speed/1000));
         this.componentMaxSpeeds[componentName] = this.degreesToRadians(speed/1000);
     }
 
-    setSpeed(componentName, speed){
-        this.componentSpeeds[componentName] = this.componentMaxSpeeds[componentName] * speed;
+    setSpeed(componentName, speedPercentage){
+        this.componentSpeeds[componentName] = this.componentMaxSpeeds[componentName] * speedPercentage;
     }
     // TODO: Implement this (quick model reset)
     reset(){
