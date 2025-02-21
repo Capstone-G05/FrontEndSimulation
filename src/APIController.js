@@ -179,10 +179,12 @@ export class APIController {
     processAugerLogic(componentName, data, direction, movement) {
         if (this.isMoving[componentName] === movement && data === 0) {
             this.modelMovementLayer.setPresetSpeedsInit(componentName, data / 100);
+            console.log(componentName + " stopped: " + data);
             this.modelMovementLayer.stopMovement(componentName);
             this.isMoving[componentName] = false;
         } else if (data !== 0) {
             this.modelMovementLayer.setPresetSpeedsInit(componentName, data / 100);
+            console.log(componentName + " started: " + data + " " + movement);
             if (this.isMoving[componentName] !== movement) {
                 this.modelMovementLayer.startMovement(componentName, movement);
                 this.isMoving[componentName] = direction;
