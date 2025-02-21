@@ -194,8 +194,8 @@ export class APIController {
     presetInit() {
         this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-max`, "max");
         this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-min`, "min");
-        this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-max`, "max");
-        this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-min`, "min");
+        // this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-max`, "max");
+        // this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-min`, "min");
         this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-max`, "max");
         this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-min`, "min");
         this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-max`, "max");
