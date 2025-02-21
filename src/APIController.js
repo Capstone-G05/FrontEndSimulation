@@ -250,7 +250,7 @@ export class APIController {
         //     console.error("Failed to reach server:", error);
         // });
 
-        this.presetInit();
+        // this.presetInit();
         // this.setPresetSpeedsInit(); // TODO: something here is problematic (defaults in API server maybe)
         this.sendInitialPositions();
         this.pollingInit();
