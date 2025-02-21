@@ -247,7 +247,7 @@ export class ModelMovementLayer {
     }
 
     PTOOff(){
-        //actions to stop model rotating PTO
+        // actions to stop model rotating PTO
         if (!this.animationStates.PTO) return; // Not running
         this.animationStates.PTO = false;
         console.log("PTO animation stopped");
@@ -264,13 +264,13 @@ export class ModelMovementLayer {
         const targetBone = this.model.bones[componentName];
         switch (componentName) {
             case "AugerArmBottom": // pivot
-                return targetBone.rotation.y;
+                return this.radiansToDegrees(targetBone.rotation.y);
             case "AugerArmTop": // fold
-                return targetBone.rotation.x;
+                return this.radiansToDegrees(targetBone.rotation.x);
             case "AugerSpout": // rotate (?)
-                return targetBone.rotation.x;
+                return this.radiansToDegrees(targetBone.rotation.x);
             case "AugerHead": // tile (?)
-                return targetBone.rotation.y;
+                return this.radiansToDegrees(targetBone.rotation.y);
             case "Gate": // gate
                 return 0;  // TODO: handle
             case "PTO":
@@ -282,5 +282,9 @@ export class ModelMovementLayer {
             default:
                 console.warn(`[getPosition] unhandled component: ${componentName}`)
         }
+    }
+
+    radiansToDegrees(radians) {
+        return radians * 180 / Math.PI;
     }
 }
