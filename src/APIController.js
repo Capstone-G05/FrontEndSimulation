@@ -194,7 +194,7 @@ export class APIController {
     presetInit() {
         this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-max`, "max");
         this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-min`, "min");
-        // this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-max`, "max");
+        // this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-max`, "max"); //todo, these dont work
         // this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-min`, "min");
         this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-max`, "max");
         this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-min`, "min");
@@ -217,10 +217,10 @@ export class APIController {
     }
 
     pollingInit() {
-        this.startPolling("AugerArmBottom", `${this.base_url}/pivot-up-pwm`, "up");
-        this.startPolling("AugerArmBottom", `${this.base_url}/pivot-down-pwm`, "down");
-        this.startPolling("AugerArmTop", `${this.base_url}/fold-out-pwm`, "up");
-        this.startPolling("AugerArmTop", `${this.base_url}/fold-in-pwm`, "down");
+        this.startPolling("AugerArmBottom", `${this.base_url}/pivot-up-pwm`, "down");
+        this.startPolling("AugerArmBottom", `${this.base_url}/pivot-down-pwm`, "up");
+        this.startPolling("AugerArmTop", `${this.base_url}/fold-out-pwm`, "down");
+        this.startPolling("AugerArmTop", `${this.base_url}/fold-in-pwm`, "up");
         this.startPolling("AugerSpout", `${this.base_url}/tilt-up-pwm`, "up");
         this.startPolling("AugerSpout", `${this.base_url}/tilt-down-pwm`, "down");
         this.startPolling("AugerHead", `${this.base_url}/rotate-cw-pwm`, "right");
