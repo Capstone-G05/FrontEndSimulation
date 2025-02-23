@@ -93,14 +93,11 @@ export class SceneManager {
             this.movementLayer = new ModelMovementLayer(grainCart, this.scene);
             this.uiController = new UIController(this.movementLayer);
             this.uiController.setUpControls();
-            //could use API CONTROLLER HERE
-            this.APIController = new APIController(this.movementLayer);
-            // console.log("API Controller: " + this.APIController);
             this.scene.add(model);
-            this.APIController.setupAPIController();
-            // this.APIController.getPresetData("http://localhost:8020/pto");//this is a placeholder url
-            // this.APIController.startPolling("http://localhost:8020/pto", 100); // 100 ms
-            // this.APIController.handleSubmitPTO();
+            //could use API CONTROLLER HERE
+            // console.log("API Controller: " + this.APIController);
+            // this.APIController = new APIController(this.movementLayer);
+            // this.APIController.setupAPIController();
         }).catch((error) => {
             console.error('Error loading grain cart:', error);
         });

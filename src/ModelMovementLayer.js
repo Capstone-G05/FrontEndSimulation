@@ -20,7 +20,7 @@ export class ModelMovementLayer {
             AugerArmTop: { min: -0.3, max: 2.7872021407926706 }, 
             AugerHead: { min: -Math.PI/3, max: Math.PI/3}, 
             AugerSpout: { min: -1.2, max: -0.5232488139826064 }, 
-            GateAngle: { min: -Math.PI/2, max: Math.PI/2 },
+            GateStick: { min: 0.0934044597388311, max: 2.7502591888170893 },
         };
 
         this.componentSpeeds = {
@@ -28,7 +28,7 @@ export class ModelMovementLayer {
             AugerArmTop: Math.PI / 1024, 
             AugerHead: Math.PI / 1024, 
             AugerSpout: Math.PI / 1024,
-            GateAngle: Math.PI / 1024
+            GateStick: Math.PI / 1024
         }; //eventually have coefficients so each component can move at different speeds
 
         this.componentMaxSpeeds = {
@@ -36,7 +36,7 @@ export class ModelMovementLayer {
             AugerArmTop: Math.PI / 1024, 
             AugerHead: Math.PI / 1024, 
             AugerSpout: Math.PI / 1024,
-            GateAngle: Math.PI / 1024
+            GateStick: Math.PI / 1024
         };
 
         this.scene = scene;
@@ -74,6 +74,8 @@ export class ModelMovementLayer {
     stopMovement(componentName) {
         this.isMoving[componentName] = false;
         cancelAnimationFrame(this.animationRequestId[componentName]);
+        console.log("min: " + this.radiansToDegrees(this.componentLimits[componentName].min));
+        console.log("max: " + this.radiansToDegrees(this.componentLimits[componentName].max));
         console.log(`Stopping ${componentName} animation`);
     }
 
@@ -92,7 +94,7 @@ export class ModelMovementLayer {
         const direction = this.isMoving[componentName];
 
         if (limits) {
-            const currentRotation = componentName === "AugerArmTop" || componentName === "AugerSpout" ? targetBone.rotation.x : targetBone.rotation.y;
+            const currentRotation = componentName === "AugerArmTop" || componentName === "AugerSpout" || componentName === "GateStick" ? targetBone.rotation.x : targetBone.rotation.y;
             const step = direction === "up" || direction === "right" ? this.componentSpeeds[componentName] : -this.componentSpeeds[componentName];
             const newRotation = currentRotation + step;
     

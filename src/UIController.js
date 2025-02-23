@@ -12,6 +12,7 @@ export class UIController {
     const AugerHead = this.pane.addFolder({title: 'AugerHead'});
     const AugerSpout = this.pane.addFolder({title: 'AugerSpout'});
     const PTO = this.pane.addFolder({title: 'PTO'});
+    const Gate = this.pane.addFolder({title: 'Gate'});
 
     //model reset
     boneFolder.addButton({ title: 'Fold Cart' }).on('click', () => {
@@ -75,6 +76,17 @@ export class UIController {
 
     PTO.addButton({ title: 'PTO off' }).on('click', () => {
         this.ModelMovementLayer.PTOOff();
+    });
+
+    //Gate
+    Gate.addButton({ title: 'Gate Open' }).on('click', () => {
+        this.ModelMovementLayer.startMovement('GateStick', "up");
+    });
+    Gate.addButton({ title: 'Gate Stop' }).on('click', () => {
+        this.ModelMovementLayer.stopMovement('GateStick');
+    });
+    Gate.addButton({ title: 'Gate Close' }).on('click', () => {
+        this.ModelMovementLayer.startMovement('GateStick', "down");
     });
 
   }
