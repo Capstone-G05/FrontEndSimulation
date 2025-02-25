@@ -44,14 +44,14 @@ export class ModelMovementLayer {
         this.grainVolume = new GrainVolume(scene, new THREE.Vector3(0, 0, 0));
     }
     setPresetData(componentName, componentData, minOrMax) {
-        console.log("Setting preset data for " + componentName + " to " + componentData + " " + minOrMax + " degrees" + " (" + this.degreesToRadians(componentData) + " radians)"); 
+        console.log("Setting preset data for " + componentName + " to " + componentData + " " + minOrMax + " degrees" + " (" + this.degreesToRadians(componentData) + " radians)");
         if (minOrMax === "min") {
             this.componentLimits[componentName].min = this.degreesToRadians(componentData);
-            console.log(componentName + " min SET TO: " + this.componentLimits[componentName].min);
+            console.log(componentName + " MIN set to: " + this.componentLimits[componentName].min);
         }
         else if (minOrMax === "max") {
             this.componentLimits[componentName].max =  this.degreesToRadians(componentData);
-            console.log(componentName + " max SET TO: " + this.componentLimits[componentName].max);
+            console.log(componentName + " MAX set to: " + this.componentLimits[componentName].max);
 
         }
     }

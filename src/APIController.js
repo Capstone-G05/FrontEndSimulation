@@ -74,9 +74,6 @@ export class APIController {
                 }
                 return response.json();
             })
-            .then(data => {
-                return data;
-            })
             .catch((error) => {
                 console.error("Error getting preset data: ", error);
             });
@@ -88,19 +85,19 @@ export class APIController {
         let url = ""
         switch (componentName) {
             case "AugerArmBottom":
-                url = this.base_url + `/pivot-angle?value=${data}`;
+                url = this.base_url + "/pivot-angle";
                 break;
             case "AugerArmTop":
-                url = this.base_url + `/fold-angle?value=${data}`;
+                url = this.base_url + "/fold-angle";
                 break;
             case "AugerSpout":
-                url = this.base_url + `/tilt-angle?value=${data}`;
+                url = this.base_url + "/tilt-angle";
                 break;
             case "AugerHead":
-                url = this.base_url + `/rotate-angle?value=${data}`;
+                url = this.base_url + "/rotate-angle";
                 break;
             case "Gate":
-                url = this.base_url + `/gate-angle?value=${data}`;
+                url = this.base_url + "/gate-angle";
                 break;
             default:
                 return; // not all components need to send position (ie. PTO, weights, etc...)
@@ -108,7 +105,7 @@ export class APIController {
         fetch(url, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: "",
+            body: JSON.stringify({"value": data})
         })
             .then((response) => {
                 if (!response.ok) {
@@ -122,21 +119,23 @@ export class APIController {
     }
 
     processRunningData(componentName, data, direction) {
+        // TODO: just pass in the param name
         switch (componentName) {
             case "AugerArmBottom":
-                this.processAugerLogic(componentName, data, direction);
+                this.processAugerLogic(componentName, data[`PIVOT_${direction.toUpperCase()}_PWM`], direction);
                 break;
             case "AugerArmTop":
-                this.processAugerLogic(componentName, data, direction);
+                this.processAugerLogic(componentName, data[`FOLD_${direction === "down" ? "OUT" : "IN"}_PWM`], direction);
                 break;
             case "AugerSpout":
-                this.processAugerLogic(componentName, data, direction);
+                this.processAugerLogic(componentName, data[`TILT_${direction === "down" ? "UP" : "DOWN"}_PWM`], direction);
                 break;
             case "AugerHead":
-                this.processAugerLogic(componentName, data, direction);
+                this.processAugerLogic(componentName, data[`ROTATE_${direction === "left" ? "CCW" : "CW"}_PWM`], direction);
                 break;
             case "Gate":
-                this.processAugerLogic(componentName, data, direction);
+                // TODO: this will also need fixing
+                this.processAugerLogic(componentName, data[`GATE_${direction.toUpperCase()}_PWM`], direction);
                 break;
             case "PTO":
                 if (this.isMoving[componentName] === true && data === 0) {
@@ -187,33 +186,35 @@ export class APIController {
         }
     }
 
-    async setPresetData(componentName, url, direction) {
+    async setPresetData(componentName, url, direction, param) {
         const data = await this.getPresetData(url);
-        this.modelMovementLayer.setPresetData(componentName, data, direction);
-    }
-    presetInit() {
-        this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-max`, "max");
-        this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-min`, "min");
-        // this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-max`, "max"); //todo, these dont work
-        // this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-min`, "min");
-        this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-max`, "max");
-        this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-min`, "min");
-        this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-max`, "max");
-        this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-min`, "min");
-        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${this.base_url}/gate-angle-max`, "max"));
-        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${this.base_url}/gate-angle-min`, "min"));
+        this.modelMovementLayer.setPresetData(componentName, data[param], direction);
     }
 
-    async setPresetSpeedsInit(componentName, url){
-        const data = await this.getPresetData(url);
-        this.modelMovementLayer.setPresetSpeedsInit(componentName, data);
+    presetInit() {
+        this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-max`, "max", "PIVOT_ANGLE_MAX");
+        this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-min`, "min", "PIVOT_ANGLE_MIN");
+        // this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-max`, "max", "FOLD_ANGLE_MAX"); //todo, these dont work
+        // this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-min`, "min", "FOLD_ANGLE_MIN");
+        this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-max`, "max", "TILT_ANGLE_MAX");
+        this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-min`, "min", "TILT_ANGLE_MIN");
+        this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-max`, "max", "ROTATE_ANGLE_MAX");
+        this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-min`, "min", "ROTATE_ANGLE_MIN");
+        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${this.base_url}/gate-angle-max`, "max", "GATE_ANGLE_MAX"));
+        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${this.base_url}/gate-angle-min`, "min", "GATE_ANGLE_MIN"));
     }
+
+    async setPresetSpeedsInit(componentName, url, param){
+        const data = await this.getPresetData(url);
+        this.modelMovementLayer.setPresetSpeedsInit(componentName, data[param]);
+    }
+
     setPresetSpeeds() {
-        this.setPresetSpeedsInit("AugerArmBottom", `${this.base_url}/pivot-speed-reference`);
-        this.setPresetSpeedsInit("AugerArmTop", `${this.base_url}/fold-speed-reference`);
-        this.setPresetSpeedsInit("AugerSpout", `${this.base_url}/tilt-speed-reference`);
-        this.setPresetSpeedsInit("AugerHead", `${this.base_url}/rotate-speed-reference`);
-        this.setPresetSpeedsInit("Gate", `${this.base_url}/gate-speed-reference`);
+        this.setPresetSpeedsInit("AugerArmBottom", `${this.base_url}/pivot-speed-reference`, "PIVOT_SPEED_REFERENCE");
+        this.setPresetSpeedsInit("AugerArmTop", `${this.base_url}/fold-speed-reference`, "FOLD_SPEED_REFERENCE");
+        this.setPresetSpeedsInit("AugerSpout", `${this.base_url}/tilt-speed-reference`, "TILT_SPEED_REFERENCE");
+        this.setPresetSpeedsInit("AugerHead", `${this.base_url}/rotate-speed-reference`, "ROTATE_SPEED_REFERENCE");
+        this.setPresetSpeedsInit("Gate", `${this.base_url}/gate-speed-reference`, "GATE_SPEED_REFERENCE");
     }
 
     pollingInit() {
