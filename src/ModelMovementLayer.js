@@ -289,8 +289,8 @@ export class ModelMovementLayer {
                 return this.radiansToDegrees(targetBone.rotation.x);
             case "AugerHead": // tile (?)
                 return this.radiansToDegrees(targetBone.rotation.y);
-            case "Gate": // gate
-                return 0;  // TODO: handle
+            case "GateStick": // gate
+                return this.radiansToDegrees(targetBone.rotation.x);
             case "PTO":
                 return 0;  // TODO: handle
             case "FrontWeight":

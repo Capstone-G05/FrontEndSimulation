@@ -19,6 +19,11 @@ export class APIController {
 
         this.api_host = import.meta.env.VITE_HOST || "localhost";
         this.api_port = import.meta.env.VITE_PORT || 8000;
+
+        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+            this.api_host = "localhost";
+        }
+
         this.base_url = `http://${this.api_host}:${this.api_port}`;
     }
 
@@ -99,7 +104,7 @@ export class APIController {
             case "AugerHead":
                 url = this.base_url + "/rotate-angle";
                 break;
-            case "Gate":
+            case "GateStick":
                 url = this.base_url + "/gate-angle";
                 break;
             default:
@@ -136,9 +141,9 @@ export class APIController {
             case "AugerHead":
                 this.processAugerLogic(componentName, data[`ROTATE_${direction === "left" ? "CCW" : "CW"}_PWM`], direction);
                 break;
-            case "Gate":
+            case "GateStick":
                 // TODO: this will also need fixing
-                this.processAugerLogic(componentName, data[`GATE_${direction.toUpperCase()}_PWM`], direction);
+                this.processAugerLogic(componentName, data[`GATE_${direction === "up" ? "OPEN" : "CLOSE"}_PWM`], direction);
                 break;
             case "PTO":
                 if (this.isMoving[componentName] === true && data['PTO_SPEED'] === 0) {
@@ -189,23 +194,23 @@ export class APIController {
         }
     }
 
-    async setPresetData(componentName, url, direction, param) {
-        const data = await this.getPresetData(url);
+    setPresetData(componentName, url, direction, param) {
+        const data = this.getPresetData(url).then(() => {});
         this.modelMovementLayer.setPresetData(componentName, data[param], direction);
     }
 
     presetInit() {
-        this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-max`, "max", "PIVOT_ANGLE_MAX").then(() => {});
-        this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-min`, "min", "PIVOT_ANGLE_MIN").then(() => {});
-        // this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-max`, "max", "FOLD_ANGLE_MAX").then(() => {}); //todo, these dont work
-        // this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-min`, "min", "FOLD_ANGLE_MIN").then(() => {});
-        this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-max`, "max", "TILT_ANGLE_MAX").then(() => {});
-        this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-min`, "min", "TILT_ANGLE_MIN").then(() => {});
-        this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-max`, "max", "ROTATE_ANGLE_MAX").then(() => {});
-        this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-min`, "min", "ROTATE_ANGLE_MIN").then(() => {});
-        this.setPresetData("GateStick", `${this.base_url}/gate-angle-max`, "max", "GATE_ANGLE_MAX").then(() => {});
-        this.setPresetData("GateStick", `${this.base_url}/gate-angle-min`, "min", "GATE_ANGLE_MIN").then(() => {});
-}
+        this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-max`, "max", "PIVOT_ANGLE_MAX");
+        this.setPresetData("AugerArmBottom", `${this.base_url}/pivot-angle-min`, "min", "PIVOT_ANGLE_MIN");
+        this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-max`, "max", "FOLD_ANGLE_MAX");
+        this.setPresetData("AugerArmTop", `${this.base_url}/fold-angle-min`, "min", "FOLD_ANGLE_MIN");
+        this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-max`, "max", "TILT_ANGLE_MAX");
+        this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-min`, "min", "TILT_ANGLE_MIN");
+        this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-max`, "max", "ROTATE_ANGLE_MAX");
+        this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-min`, "min", "ROTATE_ANGLE_MIN");
+        this.setPresetData("GateStick", `${this.base_url}/gate-angle-max`, "max", "GATE_ANGLE_MAX");
+        this.setPresetData("GateStick", `${this.base_url}/gate-angle-min`, "min", "GATE_ANGLE_MIN");
+    }
 
     async setPresetSpeedsInit(componentName, url, param){
         const data = await this.getPresetData(url);
@@ -217,7 +222,7 @@ export class APIController {
         this.setPresetSpeedsInit("AugerArmTop", `${this.base_url}/fold-speed-reference`, "FOLD_SPEED_REFERENCE").then(() => {});
         this.setPresetSpeedsInit("AugerSpout", `${this.base_url}/tilt-speed-reference`, "TILT_SPEED_REFERENCE").then(() => {});
         this.setPresetSpeedsInit("AugerHead", `${this.base_url}/rotate-speed-reference`, "ROTATE_SPEED_REFERENCE").then(() => {});
-        this.setPresetSpeedsInit("Gate", `${this.base_url}/gate-speed-reference`, "GATE_SPEED_REFERENCE").then(() => {});
+        this.setPresetSpeedsInit("GateStick", `${this.base_url}/gate-speed-reference`, "GATE_SPEED_REFERENCE").then(() => {});
     }
 
     pollingInit() {
