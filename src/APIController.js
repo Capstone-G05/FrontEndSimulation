@@ -200,8 +200,8 @@ export class APIController {
         this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-min`, "min");
         this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-max`, "max");
         this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-min`, "min");
-        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${this.base_url}/gate-angle-max`, "max"));
-        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${this.base_url}/gate-angle-min`, "min"));
+        this.modelMovementLayer.setPresetData("GateStick", this.getPresetData(`${this.base_url}/gate-angle-max`, "max"));
+        this.modelMovementLayer.setPresetData("GateStick", this.getPresetData(`${this.base_url}/gate-angle-min`, "min"));
     }
 
     async setPresetSpeedsInit(componentName, url){
@@ -213,7 +213,7 @@ export class APIController {
         this.setPresetSpeedsInit("AugerArmTop", `${this.base_url}/fold-speed-reference`);
         this.setPresetSpeedsInit("AugerSpout", `${this.base_url}/tilt-speed-reference`);
         this.setPresetSpeedsInit("AugerHead", `${this.base_url}/rotate-speed-reference`);
-        this.setPresetSpeedsInit("Gate", `${this.base_url}/gate-speed-reference`);
+        this.setPresetSpeedsInit("GateStick", `${this.base_url}/gate-speed-reference`);
     }
 
     pollingInit() {
@@ -225,8 +225,8 @@ export class APIController {
         this.startPolling("AugerSpout", `${this.base_url}/tilt-down-pwm`, "up");
         this.startPolling("AugerHead", `${this.base_url}/rotate-cw-pwm`, "right");
         this.startPolling("AugerHead", `${this.base_url}/rotate-ccw-pwm`, "left");
-        // this.startPolling("Gate", `${this.base_url}/gate-open-pwm`, "up"); //TODO
-        // this.startPolling("Gate", `${this.base_url}/gate-close-pwm`, "down"); //TODO
+        this.startPolling("GateStick", `${this.base_url}/gate-open-pwm`, "up"); //TODO
+        this.startPolling("GateStick", `${this.base_url}/gate-close-pwm`, "down"); //TODO
         this.startPolling("PTO", `${this.base_url}/pto-speed`, "NA");
         this.startPolling("FrontWeight", `${this.base_url}/weight-front`, "NA");
         this.startPolling("RearWeight", `${this.base_url}/weight-rear`, "NA");
@@ -237,7 +237,7 @@ export class APIController {
         this.sendPosition("AugerArmTop");
         this.sendPosition("AugerHead");
         this.sendPosition("AugerSpout");
-        // this.sendPosition("Gate"); //TODO
+        this.sendPosition("GateStick"); //TODO
     }
 
     simulationPower() {
