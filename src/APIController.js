@@ -203,9 +203,9 @@ export class APIController {
         this.setPresetData("AugerSpout", `${this.base_url}/tilt-angle-min`, "min", "TILT_ANGLE_MIN").then(() => {});
         this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-max`, "max", "ROTATE_ANGLE_MAX").then(() => {});
         this.setPresetData("AugerHead", `${this.base_url}/rotate-angle-min`, "min", "ROTATE_ANGLE_MIN").then(() => {});
-        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${this.base_url}/gate-angle-max`, "max", "GATE_ANGLE_MAX")).then(() => {});
-        // this.modelMovementLayer.setPresetData("Gate", this.getPresetData(`${this.base_url}/gate-angle-min`, "min", "GATE_ANGLE_MIN")).then(() => {});
-    }
+        this.setPresetData("GateStick", `${this.base_url}/gate-angle-max`, "max", "GATE_ANGLE_MAX").then(() => {});
+        this.setPresetData("GateStick", `${this.base_url}/gate-angle-min`, "min", "GATE_ANGLE_MIN").then(() => {});
+}
 
     async setPresetSpeedsInit(componentName, url, param){
         const data = await this.getPresetData(url);
