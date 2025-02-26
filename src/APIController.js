@@ -195,8 +195,9 @@ export class APIController {
     }
 
     setPresetData(componentName, url, direction, param) {
-        const data = this.getPresetData(url).then(() => {});
-        this.modelMovementLayer.setPresetData(componentName, data[param], direction);
+        this.getPresetData(url).then((data) => {
+            this.modelMovementLayer.setPresetData(componentName, data[param], direction);
+        });
     }
 
     presetInit() {
