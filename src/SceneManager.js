@@ -96,8 +96,8 @@ export class SceneManager {
             this.scene.add(model);
             //could use API CONTROLLER HERE
             // console.log("API Controller: " + this.APIController);
-            // this.APIController = new APIController(this.movementLayer);
-            // this.APIController.setupAPIController();
+            this.APIController = new APIController(this.movementLayer);
+            this.APIController.setupAPIController();
         }).catch((error) => {
             console.error('Error loading grain cart:', error);
         });
