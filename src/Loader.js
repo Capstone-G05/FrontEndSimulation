@@ -4,10 +4,14 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 
 export class Loader {
     constructor() {
+        if(Loader._instance) {
+            return Loader._instance;
+        }
         this.loader = new GLTFLoader();
         this.draco = new DRACOLoader();
         this.draco.setDecoderPath("/draco");
         this.loader.setDRACOLoader(this.draco);
+        Loader._instance = this;
     }
     
     load(model) {
