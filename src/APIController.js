@@ -170,6 +170,9 @@ export class APIController {
                     // console.log(componentName + " changed: " + data);
                 }
                 break;
+            case "TotalWeight":
+                this.modelMovementLayer.setGrainHeight(data["WEIGHT_TOTAL"]);
+                break;
             case "Power":
                 this.powerOn = data["ONLINE"];
                 break;
@@ -240,6 +243,7 @@ export class APIController {
         this.startPolling("PTO", `${this.base_url}/pto-speed`, "NA");
         this.startPolling("FrontWeight", `${this.base_url}/weight-front`, "NA");
         this.startPolling("RearWeight", `${this.base_url}/weight-rear`, "NA");
+        this.startPolling("TotalWeight", `${this.base_url}/weight-total`, "NA");
     }
 
     sendInitialPositions() {
