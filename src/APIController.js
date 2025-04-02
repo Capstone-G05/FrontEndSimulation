@@ -146,10 +146,10 @@ export class APIController {
                 this.processAugerLogic(componentName, data[`GATE_${direction === "up" ? "OPEN" : "CLOSE"}_PWM`], direction);
                 break;
             case "PTO":
-                if (this.isMoving[componentName] === true && data['PTO_SPEED'] === 0) {
+                if (data['PTO_SPEED'] === 0) {
                     this.modelMovementLayer.PTOOff();
                     this.isMoving[componentName] = false;
-                } else if (this.isMoving[componentName] === false && data["PTO_SPEED"] !== 0) {
+                } else if (data["PTO_SPEED"] !== 0) {
                     this.modelMovementLayer.PTOOn();
                     this.isMoving[componentName] = true;
                 }
@@ -172,6 +172,7 @@ export class APIController {
                 break;
             case "TotalWeight":
                 this.modelMovementLayer.setGrainHeight(data["WEIGHT_TOTAL"]);
+                this.modelMovementLayer.weight = data["WEIGHT_TOTAL"];
                 break;
             case "Power":
                 this.powerOn = data["ONLINE"];

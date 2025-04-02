@@ -42,6 +42,8 @@ export class ModelMovementLayer {
         this.scene = scene;
         this.grainPouringEffect = new GrainPouringEffect(scene, model);
         this.grainVolume = new GrainVolume(scene, new THREE.Vector3(0, 0, 0));
+
+        this.weight = 0;
     }
 
     setPresetData(componentName, componentData, minOrMax) {
@@ -244,8 +246,11 @@ export class ModelMovementLayer {
     }
 
     PTOOn(){
-        //actions to keep model rotating PTO
-        console.log("PTO On");
+        // actions to keep model rotating PTO
+        if (this.weight <= 0) {
+            this.PTOOff();
+            return;
+        }
         if (this.animationStates.PTO) return; // Already running
         this.animationStates.PTO = true;
         console.log("PTO animation started");
