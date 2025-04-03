@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-const MAX_WEIGHT = 100000
+const MAX_WEIGHT = 55000
 const MIN_WEIGHT = 0
 
 const WEIGHT_1 = ((1.45 - 1.1) / (2.9 - 1.1)) * (MAX_WEIGHT - MIN_WEIGHT)
