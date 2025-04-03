@@ -42,7 +42,10 @@ export class ModelMovementLayer {
         this.scene = scene;
         this.grainPouringEffect = new GrainPouringEffect(scene, model);
         this.grainVolume = new GrainVolume(scene, new THREE.Vector3(0, 0, 0));
+
+        this.weight = 0;
     }
+
     setPresetData(componentName, componentData, minOrMax) {
         console.log("Setting preset data for " + componentName + " to " + componentData + " " + minOrMax + " degrees" + " (" + this.degreesToRadians(componentData) + " radians)");
         if (minOrMax === "min") {
@@ -77,6 +80,10 @@ export class ModelMovementLayer {
         console.log("min: " + this.radiansToDegrees(this.componentLimits[componentName].min));
         console.log("max: " + this.radiansToDegrees(this.componentLimits[componentName].max));
         console.log(`Stopping ${componentName} animation`);
+    }
+
+    setGrainHeight(weight) {
+        this.grainVolume.adjustHeight(weight);
     }
 
     /* Animate the component (up or down) */
@@ -209,7 +216,6 @@ export class ModelMovementLayer {
                 checkIfFolded();
             });
         };
-    
 
         moveAugerHeadToCenter()
             .then(() => foldAugerTop())
@@ -221,8 +227,6 @@ export class ModelMovementLayer {
                 console.error("Error during auto fold:", error);
             });
     }
-
-
 
     setPresetSpeedsInit(componentName, speed){
         // TODO: units ???
@@ -242,8 +246,11 @@ export class ModelMovementLayer {
     }
 
     PTOOn(){
-        //actions to keep model rotating PTO
-        console.log("PTO On");
+        // actions to keep model rotating PTO
+        if (this.weight <= 0) {
+            this.PTOOff();
+            return;
+        }
         if (this.animationStates.PTO) return; // Already running
         this.animationStates.PTO = true;
         console.log("PTO animation started");
@@ -296,6 +303,8 @@ export class ModelMovementLayer {
             case "FrontWeight":
                 return 0;  // TODO: handle
             case "RearWeight":
+                return 0;  // TODO: handle
+            case "TotalWeight":
                 return 0;  // TODO: handle
             default:
                 console.warn(`[getPosition] unhandled component: ${componentName}`)
