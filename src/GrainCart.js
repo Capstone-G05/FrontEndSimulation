@@ -20,7 +20,7 @@ export class GrainCart {
         return new Promise((resolve, reject) => {
             if (this.modelType === "haulmaster1300") {
                 // Use the loader to load the model
-                this.loader.load("models/grainCartArmatureV3.glb")
+                this.loader.load("models/DecalsAddedV3.glb")
                     .then((loadedScene) => {
                         // Once loaded, set up the model
                         this.model = loadedScene;
