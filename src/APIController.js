@@ -143,7 +143,7 @@ export class APIController {
                 break;
             case "GateStick":
                 // TODO: this will also need fixing
-                this.processAugerLogic(componentName, data[`GATE_${direction === "up" ? "OPEN" : "CLOSE"}_PWM`], direction);
+                this.processAugerLogic(componentName, data[`GATE_${direction === "up" ? "CLOSE" : "OPEN"}_PWM`], direction);
                 break;
             case "PTO":
                 if (data['PTO_SPEED'] === 0) {
