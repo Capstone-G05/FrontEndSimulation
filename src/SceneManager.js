@@ -91,8 +91,8 @@ export class SceneManager {
             model.castShadow = false;
             model.recieveShadow = false;
             this.movementLayer = new ModelMovementLayer(grainCart, this.scene);
-            this.uiController = new UIController(this.movementLayer);
-            this.uiController.setUpControls();
+            // this.uiController = new UIController(this.movementLayer);  // uncomment for web UI controls
+            // this.uiController.setUpControls();
             this.scene.add(model);
             //could use API CONTROLLER HERE
             // console.log("API Controller: " + this.APIController);
